@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Environment & Secrets (NEVER COMMIT)
+.env
+.env.local
+.env.*.local
+*.csv
+*.pem
+*.key
+
+# Build & Runtime
+dist/
+build/
+.aws-sam/
+out/
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# System & IDE
+.DS_Store
+.idea/
+.vscode/

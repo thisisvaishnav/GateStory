@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build, Ship, Shape — Amazon Developer Hackathon 2026 | Deep Research Report</title>
+<style>
+  :root{
+    --bg:#faf8f5; --ink:#16130f; --muted:#6b6459; --line:#e4ddd2;
+    --card:#ffffff; --fire:#e8590c; --alexa:#6d4aff; --bee:#d99000; --ring:#0e8577;
+    --aws:#1f6feb; --oss:#8250df; --flag:#c1121f;
+    --code:#f2ede4;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth; scroll-padding-top:72px}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 24px}
+  a{color:inherit}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.88em; background:var(--code); padding:1px 6px; border-radius:5px}
+
+  /* NAV */
+  nav{position:sticky; top:0; z-index:50; background:rgba(250,248,245,.92);
+    backdrop-filter:blur(10px); border-bottom:1px solid var(--line)}
+  .nav-in{max-width:1180px; margin:0 auto; padding:12px 24px; display:flex; gap:6px; flex-wrap:wrap; align-items:center}
+  .brand{font-weight:800; letter-spacing:-.02em; margin-right:12px; font-size:14px; text-transform:uppercase}
+  nav a{font-size:13px; text-decoration:none; color:var(--muted); padding:5px 10px; border-radius:99px; font-weight:500}
+  nav a:hover{background:#efe9df; color:var(--ink)}
+
+  /* HERO */
+  header.hero{padding:64px 0 44px; border-bottom:1px solid var(--line);
+    background:radial-gradient(1200px 400px at 15% -10%, #ffe9d6 0%, transparent 60%),var(--bg)}
+  .kicker{font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--fire); font-weight:700}
+  h1{font-size:clamp(32px,5vw,56px); line-height:1.05; letter-spacing:-.035em; margin:14px 0 16px; font-weight:850}
+  .lede{font-size:19px; color:#423c33; max-width:78ch}
+  .meta{display:flex; gap:10px; flex-wrap:wrap; margin-top:26px}
+  .pill{background:var(--card); border:1px solid var(--line); border-radius:99px; padding:7px 14px; font-size:13px; font-weight:600}
+  .pill b{color:var(--fire)}
+
+  /* SECTIONS */
+  section{padding:56px 0; border-bottom:1px solid var(--line)}
+  h2{font-size:clamp(26px,3.4vw,38px); letter-spacing:-.03em; margin:0 0 8px; font-weight:800}
+  .sec-sub{color:var(--muted); max-width:80ch; margin:0 0 30px; font-size:16.5px}
+  h3{font-size:19px; letter-spacing:-.02em; margin:34px 0 12px; font-weight:750}
+  h4{font-size:15px; margin:22px 0 8px; font-weight:700}
+  p{margin:10px 0}
+  ul,ol{padding-left:20px; margin:10px 0}
+  li{margin:5px 0}
+
+  .grid{display:grid; gap:16px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px}
+  .card h4{margin-top:0}
+  .tcard{border-top:4px solid var(--fire)}
+  .tcard.alexa{border-top-color:var(--alexa)}
+  .tcard.bee{border-top-color:var(--bee)}
+  .tcard.ring{border-top-color:var(--ring)}
+  .tcard.aws{border-top-color:var(--aws)}
+  .tcard.oss{border-top-color:var(--oss)}
+
+  .tag{display:inline-block; font-size:11px; font-weight:700; letter-spacing:.06em;
+    text-transform:uppercase; padding:3px 9px; border-radius:6px; background:#efe9df; color:#4a443a; margin-right:6px}
+  .tag.fire{background:#fdece1; color:#b3400a}
+  .tag.alexa{background:#eee9ff; color:#4c2ecc}
+  .tag.bee{background:#fdf1d7; color:#8a5c00}
+  .tag.ring{background:#e0f4f1; color:#0a6a5f}
+  .tag.aws{background:#e6f0ff; color:#1757c2}
+  .tag.oss{background:#f0e9fd; color:#6a35c9}
+  .tag.hot{background:#fde8ea; color:#a80d1a}
+
+  table{width:100%; border-collapse:collapse; font-size:14.5px; background:var(--card);
+    border:1px solid var(--line); border-radius:12px; overflow:hidden; margin:14px 0}
+  th,td{text-align:left; padding:11px 13px; border-bottom:1px solid var(--line); vertical-align:top}
+  th{background:#f3eee5; font-size:12.5px; text-transform:uppercase; letter-spacing:.05em; color:#5a5348}
+  tr:last-child td{border-bottom:none}
+  td b{font-weight:700}
+
+  .stat{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px}
+  .stat .n{font-size:30px; font-weight:850; letter-spacing:-.03em; line-height:1.1}
+  .stat .l{font-size:13.5px; color:var(--muted); margin-top:6px}
+  .stat.fire .n{color:var(--fire)} .stat.ring .n{color:var(--ring)}
+  .stat.alexa .n{color:var(--alexa)} .stat.bee .n{color:var(--bee)}
+
+  .callout{border-left:4px solid var(--fire); background:#fff6ef; padding:16px 18px; border-radius:0 12px 12px 0; margin:20px 0}
+  .callout.warn{border-color:var(--flag); background:#fff1f2}
+  .callout.ok{border-color:var(--ring); background:#eefaf7}
+  .callout.info{border-color:var(--aws); background:#f0f6ff}
+  .callout b{display:block; margin-bottom:4px}
+
+  .stars{color:#e5a100; font-weight:800; letter-spacing:1px}
+  .small{font-size:13.5px; color:var(--muted)}
+  .src{font-size:12.5px; color:#8a8175}
+  hr{border:none; border-top:1px solid var(--line); margin:30px 0}
+
+  .rank{display:flex; gap:16px; align-items:flex-start; background:var(--card);
+    border:1px solid var(--line); border-radius:14px; padding:20px; margin:14px 0}
+  .rank .no{flex:0 0 46px; height:46px; border-radius:12px; background:var(--ink); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-weight:850; font-size:19px}
+  .rank h4{margin:0 0 6px; font-size:17.5px}
+  .rank p{margin:4px 0}
+
+  .chip{display:inline-block; font-size:12px; font-weight:650; padding:3px 9px;
+    border:1px solid var(--line); background:#fff; border-radius:99px; margin:3px 4px 0 0}
+  .timeline{border-left:2px solid var(--line); margin:18px 0 18px 8px; padding-left:22px}
+  .tl{position:relative; margin:0 0 18px}
+  .tl::before{content:""; position:absolute; left:-30px; top:6px; width:12px; height:12px;
+    border-radius:50%; background:var(--fire); border:2px solid var(--bg)}
+  .tl b{display:block; font-size:15px}
+  .tl span{font-size:14px; color:var(--muted)}
+
+  footer{padding:44px 0 70px; color:var(--muted); font-size:14px}
+  @media (max-width:720px){ .rank{flex-direction:column} th,td{padding:9px 10px; font-size:13.5px} }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <span class="brand">Amazon Hackathon · Research</span>
+    <a href="#overview">Overview</a>
+    <a href="#tracks">Tracks</a>
+    <a href="#global">Global Problems</a>
+    <a href="#india">India Ground Zero</a>
+    <a href="#ideas">48 Ideas</a>
+    <a href="#skills">ECC Skills</a>
+    <a href="#strategy">Strategy</a>
+    <a href="#picks">Top Picks</a>
+    <a href="#timeline">Timeline</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">Deep Research Report · 30 Agent Swarm · Sept 27, 2026</div>
+    <h1>Build, Ship, Shape:<br>Amazon Developer Hackathon</h1>
+    <p class="lede">Track-by-track breakdown, the real-world problems each track exists to solve (global + India ground level), 48 buildable project concepts mapped to the judging rubric, an ECC skill stack for execution, and a week-by-week plan to the <b>Oct 23, 2026</b> deadline.</p>
+    <div class="meta">
+      <span class="pill">Deadline <b>Oct 23, 2026 · 12:00pm PDT</b></span>
+      <span class="pill">Prizes <b>$138,000</b> cash + AWS credits ($190K value)</span>
+      <span class="pill">15,854 participants</span>
+      <span class="pill">4 tracks · 2 mini challenges</span>
+      <span class="pill">Judging <b>Nov 9–20</b></span>
+    </div>
+  </div>
+</header>
+
+<!-- ============================ OVERVIEW ============================ -->
+<section id="overview">
+  <div class="wrap">
+    <h2>1. Hackathon at a Glance</h2>
+    <p class="sec-sub">First hackathon where <b>Fire TV, Alexa+, Ring, and Bee</b> are all open to outside developers at once. Pick one primary track, ship a working demo, and optionally stack a mini challenge for extra ways to win.</p>
+
+    <div class="grid g4">
+      <div class="stat fire"><div class="n">$25K</div><div class="l">Fire TV 1st · Alexa+ 1st each (15,854 people → ~200–500 real submissions expected)</div></div>
+      <div class="stat alexa"><div class="n">$12K</div><div class="l">Bee 1st &amp; Ring 1st (only 2 places each — thinner pool, steeper entry friction)</div></div>
+      <div class="stat ring"><div class="n">+10%</div><div class="l">Judging bonus for high-quality friction logs (up to)</div></div>
+      <div class="stat bee"><div class="n">3:00</div><div class="l">Minutes max on the demo video — judges aren't required to watch past it</div></div>
+    </div>
+
+    <h3>Tracks &amp; Prize Table</h3>
+    <table>
+      <tr><th>Track / Challenge</th><th>What they want</th><th>Priority categories</th><th>Prizes</th></tr>
+      <tr>
+        <td><span class="tag fire">Track 1</span><b>Fire TV</b></td>
+        <td>Demo-ready app on <b>Fire OS or Vega OS</b> — React Native, web, or Android (Kotlin/Java). Video must show it on a real device or the Fire TV/Vega simulator.</td>
+        <td>AI-enhanced viewing · sports · fitness · family entertainment · multi-modal UX · computer vision</td>
+        <td>$25,000 / $15,000 / $4,000 + AWS credits</td>
+      </tr>
+      <tr>
+        <td><span class="tag alexa">Track 2</span><b>Alexa+</b></td>
+        <td>Self-hosted <b>MCP server</b> (spec 2025-11-25+, Streamable HTTP) <i>or</i> an <b>Agent Skill</b> <i>or</i> a <b>simulated Alexa+ web experience</b> (explicitly allowed; simulation source must be in the repo).</td>
+        <td>Cross-service agentic orchestration · state across sessions · MCP Apps interactive visuals · purchasing/media flows</td>
+        <td>$25,000 / $15,000 / $4,000 + AWS credits</td>
+      </tr>
+      <tr>
+        <td><span class="tag bee">Track 3</span><b>Bee (Wearable AI)</b></td>
+        <td>Uses <b>real live Bee data</b> (Bee device or Apple Watch running Bee software) via Bee CLI, MCP server, Agent Skill or local proxy. Mention-only = disqualified.</td>
+        <td>Education · developer experience · personal productivity. Creative: cross-device orchestration, facts/insight depth, realtime, self-improvement</td>
+        <td>$12,000 / $8,000</td>
+      </tr>
+      <tr>
+        <td><span class="tag ring">Track 4</span><b>Ring</b></td>
+        <td>New or extended app using <b>Ring APIs, SDK, simulators or devices</b> — no physical device required (Developers Playground gives synthetic devices + event simulation). Repo must call Ring tech at runtime.</td>
+        <td>Access control · business systems · IoT home automation · accessibility · caretaking</td>
+        <td>$12,000 / $8,000</td>
+      </tr>
+      <tr>
+        <td><span class="tag aws">Mini</span><b>AWS Builder</b></td>
+        <td>Documented AWS integration (Bedrock, AgentCore, Strands SDK, Kiro Crew, SageMaker…). <b>Kiro Crew qualifies on its own</b> as a dev tool.</td>
+        <td>Single Bedrock+S3 call = "obvious"; Bedrock + AgentCore + Strands multi-service pipeline = "creative"</td>
+        <td>$5,000 + $5,000 AWS credits</td>
+      </tr>
+      <tr>
+        <td><span class="tag oss">Mini</span><b>Open Source</b></td>
+        <td>A <b>new</b> OSS project (with license) or a <b>contribution</b> (branch/fork/PR) during the window — PRs need not be merged.</td>
+        <td>Obvious: README/typo. Creative: feature with tests, bug fix that unblocks devs, new integration pattern</td>
+        <td>$5,000 + $5,000 AWS credits</td>
+      </tr>
+    </table>
+    <p class="small">One project can win <b>one track prize + one mini challenge prize</b>. Per-track prize pool: Fire TV &amp; Alexa+ = $44K each; Bee &amp; Ring = $20K each.</p>
+
+    <h3>Judging (what actually decides the money)</h3>
+    <div class="grid g2">
+      <div class="card">
+        <h4>Stage 1 — Pass/Fail</h4>
+        <ul>
+          <li>Project fits the chosen track's theme.</li>
+          <li><b>Required tech is used at runtime</b> — an import, entry point, loaded MCP/agent config — <i>not just named in the README</i>.</li>
+          <li>Fire TV exception: any framework is fine, but the demo video must show it running on Fire OS/Vega (device or simulator).</li>
+          <li>Amazon's internal review team reads your friction logs here and may forward up to 10% to Stage 2.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>Stage 2 — Four equal weights</h4>
+        <ul>
+          <li><b>Tech Implementation</b> — effective use of required APIs/SDKs/device capabilities (tie-breaker #1).</li>
+          <li><b>Design</b> — coherent, intuitive product experience <i>for that device</i> (D-pad focus on TV, voice flow on Alexa+).</li>
+          <li><b>Potential Impact</b> — credible, specific customer need; an audience beyond the hackathon.</li>
+          <li><b>Quality of the Idea</b> — creative use of the tools; understanding of ecosystem + end users.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <b>Submission requirements that sink otherwise-good projects</b>
+      GitHub only (GitLab rejected) · public repo with a <b>detectable OSS license</b> OR private repo shared with <code>testing@devpost.com</code> + six Amazon GitHub handles (<code>chris-trag, knmeiss, giolaq, anishamalde, mosesroth, emersonsklar</code>) · <b>collab invites expire in 7 days and must be accepted</b> — send at submission time · demo video &lt;3 min, public YouTube/Vimeo, English · product feedback on <i>every</i> tool/API/SDK used · friction log (optional but worth up to 10%) · AWS credits form due <b>Oct 21</b>, noon PT · tear down AWS before judging (Nov 9–20).
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TRACKS ============================ -->
+<section id="tracks">
+  <div class="wrap">
+    <h2>2. Track Deep Dives</h2>
+    <p class="sec-sub">What each track's tooling actually is in Sept 2026, what judges verify, and where the open space is. This is the distilled output of 6 dedicated track-research agents.</p>
+
+    <div class="grid g2">
+      <div class="card tcard">
+        <span class="tag fire">Track 1 · Fire TV</span>
+        <h4>Vega OS is the future — and the gap</h4>
+        <ul>
+          <li><b>Two incompatible targets:</b> Fire OS 16 (Android/API 28, ADB sideload) vs <b>Vega OS</b> (Amazon's Linux/RN OS on Fire TV Stick 4K Select + Stick HD). Apps don't cross over. No new Fire TV models ship Fire OS — a Vega-native build signals ecosystem alignment.</li>
+          <li><b>Tooling:</b> Vega Developer Tools (CLI + Vega Studio + <b>Vega Virtual Device simulator</b>, Mac/Linux) · Amazon Devices Builder Tools — an MCP server + Agent Skills that teach your AI agent Fire TV patterns (<code>npx -y @amazon-devices/amazon-devices-buildertools-mcp@latest --init-context</code>) · starters: <code>react-native-multi-tv-app-sample</code> (one codebase → Vega/Android TV/web), <code>vega-sports-app</code>, <code>vega-video-sample</code>.</li>
+          <li><b>Media:</b> ExoPlayer/Widevine on Fire OS, Shaka Player on web, <code>@amzn/react-native-w3cmedia</code> on Vega. <b>VSK for Fire TV is deprecated</b> — multimodal now via Media Session API + deep-link intents.</li>
+          <li><b>CV on TV:</b> Fire TV Cube supports USB UVC webcams (Camera2 + TFLite/ML Kit). Sticks lack full USB; Vega camera support unverified — <i>the riskiest priority category</i>.</li>
+          <li><b>Open space:</b> Vega has no DVR/Jellyfin, few utilities, zero native games, no local-media players. Fire App Builder is end-of-support.</li>
+        </ul>
+        <p class="small"><b>Verify:</b> video on device/simulator · judges explicitly score "basic streaming UI / simple video player / remote game" as obvious.</p>
+      </div>
+
+      <div class="card tcard alexa">
+        <span class="tag alexa">Track 2 · Alexa+</span>
+        <h4>MCP is the open door — partner tools are gated</h4>
+        <ul>
+          <li><b>Pin spec 2025-11-25 + Streamable HTTP.</b> The 2026-07-28 release made MCP stateless (removed <code>initialize</code>, <code>Mcp-Session-Id</code>, GET SSE stream) — an Alexa+ client won't handshake with a 2026-only server. Devpost allows "later, once confirmed" — don't gamble.</li>
+          <li><b>Self-hosted</b> = your server on a remote HTTPS URL; Alexa+ acts as MCP client. Production onboarding wants OAuth 2.1 + PKCE (S256), RFC 9728 protected-resource metadata, well-known AS metadata. <b>For the hackathon: skip auth</b> (no-auth/bearer on localhost or tunnel) — the FAQ says participants can't access partner tooling, so no public integration is required.</li>
+          <li><b>Three valid paths:</b> ① self-hosted MCP server ② Agent Skill ③ simulated Alexa+ web app (no framework required — but repo must include the simulation source and the demo must show it working).</li>
+          <li><b>Saturated:</b> travel/hotels, restaurants, rides, tickets, big smart-home brands, Canva, Yelp. <b>Fresh:</b> MCP Apps interactive <code>resourceUri</code> visuals (few will use it), caretaking, accessibility, education, local niche services, elicitations, DX.</li>
+          <li><b>Weekend build:</b> TS SDK <code>@modelcontextprotocol/sdk</code> 1.30.x → <code>McpServer</code> + zod schemas + <code>StreamableHTTPServerTransport</code> → verify in MCP Inspector → <code>cloudflared tunnel</code> → agent loop (Claude/OpenAI tool-calling) + chat/card UI.</li>
+        </ul>
+        <p class="small"><b>Verify:</b> runtime tool calls visible (MCP Inspector B-roll works great), simulation source in repo.</p>
+      </div>
+
+      <div class="card tcard bee">
+        <span class="tag bee">Track 3 · Bee</span>
+        <h4>Live data or disqualification</h4>
+        <ul>
+          <li><b>What Bee is:</b> $49.99 band/clip (US) + free iPhone/Android/Apple Watch app. Transcribes conversations, <b>discards audio after processing</b> — only transcripts/summaries persist. Derived data: transcripts w/ speaker IDs, daily summaries, facts (personal memory), todos, voice notes, insights, location clusters.</li>
+          <li><b>Dev surface:</b> CLI (<code>npm i -g @beeai/cli</code>: <code>bee today/facts/todos/search/conversations/daily/insights</code>, <code>bee sync</code>, <code>bee changed --cursor</code>) · MCP server (~39 tools: <code>bee_search</code>, transcripts, facts/todos CRUD) · Agent Skill (<code>npx skills add bee-computer/bee-skill</code>) · local proxy <code>bee proxy</code> → <code>http://127.0.0.1:8787/v1/*</code> with SSE stream. Developer Mode = tap app version ×5 in iOS settings.</li>
+          <li><b>Device-free path:</b> a free Apple Watch running Bee software is explicitly allowed. Android Developer Mode requires a paired Bee device. There is no official simulator — use mocks for dev, <b>real data on camera</b> for the video.</li>
+          <li><b>Rules:</b> "mentioning Bee without demonstrating live data does not count." Show <code>bee stream</code> / proxy SSE live.</li>
+          <li><b>Creative list:</b> cross-device orchestration (Bee + Alexa + Fire TV), facts/insight depth, realtime, self-improvement. <b>Obvious:</b> notification relay / logging.</li>
+        </ul>
+        <p class="small"><b>Hedge:</b> verify you (or a teammate) have an Apple Watch on iOS before committing to this track.</p>
+      </div>
+
+      <div class="card tcard ring">
+        <span class="tag ring">Track 4 · Ring</span>
+        <h4>Hardware-free since May 2026 — but no actuators</h4>
+        <ul>
+          <li><b>Ring Developer Portal is GA</b> (Mar 2026). Partner API at <code>api.amazonvision.com</code> (OAuth via <code>oauth.ring.com</code>, Bearer ~4h, 100 TPS, JSON:API) — <b>server-to-server only</b> (CORS blocks browsers). No official SDK — plain HTTP + the <code>ring-api-helloworld</code> Next.js starter.</li>
+          <li><b>Developers Playground (May 2026):</b> 30-min one-click token, synthetic devices, event simulation (Package/Vehicle/Motion, <code>button_press</code>), full WebRTC/WHEP live view — <b>no account linking, no Ring subscription, no hardware</b>. Plus a Sandbox for unlimited synthetic testing.</li>
+          <li><b>API surface:</b> <code>GET /v1/devices</code>, history/events, HMAC-signed webhooks (<code>motion_detected</code> human/animal/vehicle, <code>button_press</code>, lifecycle), WHEP streaming, snapshots, MP4 clips. <b>Only write endpoint = Chime audio playback.</b> No official lock/unlock, light, or alarm-arm.</li>
+          <li><b>Trap:</b> unofficial <code>ring-client-api</code> is not in Ring docs → Stage-1 risk. Marketing copy "access controls" means data/entitlement access, not lock control.</li>
+          <li><b>Gotchas:</b> media carries a server-side watermark (Aug 2026) — relevant to CV; streams cap 30s (battery)/60s (wired); webhooks need a public HTTPS endpoint (or use Playground sim events).</li>
+        </ul>
+        <p class="small"><b>Verify:</b> "imported and actually called" in code + video showing simulator or device.</p>
+      </div>
+    </div>
+
+    <h3>Mini challenges — cheap multipliers</h3>
+    <div class="grid g2">
+      <div class="card tcard aws">
+        <span class="tag aws">AWS Builder</span>
+        <p><b>Fastest credible path:</b> API Gateway → Lambda → <b>Strands <code>Agent()</code> on Bedrock (Nova Lite/Micro)</b> + <code>@tool</code> calling DynamoDB/S3; Cognito auth; CDK/Terraform IaC. Or deploy the whole agent to <b>AgentCore Runtime</b> via <code>bedrock-agentcore-starter-toolkit</code> (2 commands).</p>
+        <ul>
+          <li><b>AgentCore</b> = Runtime (agent hosting) · Identity (free via Runtime) · Gateway (Lambda→MCP tools) · Memory · Observability/Evaluations. Use Runtime+Identity+Observability for a "production agent" story.</li>
+          <li><b>Strands SDK</b> (Python + TypeScript): model-driven loop, <code>@tool</code> decorator, MCP/A2A, swarms, tracing — beats raw Converse API when you need orchestration.</li>
+          <li><b>Kiro Crew</b> qualifies <i>on its own</i> (rules §4) — no runtime AWS service needed; describe usage in product feedback.</li>
+          <li><b>Credits:</b> $150/person via form (due <b>Oct 21 noon PT</b>); new accounts get up to $200 for 6 months. Bedrock: use Nova Micro/Lite + Flex tier (−50%) + budget alerts.</li>
+          <li><b>Documentation bar:</b> product feedback naming services · README "AWS Integration" table (service → purpose → <code>file:line</code>) · Mermaid architecture diagram · IaC in repo · teardown steps.</li>
+        </ul>
+      </div>
+      <div class="card tcard oss">
+        <span class="tag oss">Open Source</span>
+        <p><b>A meaningful PR beats a brand-new repo</b> — borrowing credibility judges already know. Best hybrid: a feature PR with tests <i>plus</i> a small new tool if time allows. The rules' own "creative" example is essentially extending Amazon's <code>react-native-multi-tv-app-sample</code> with Vega support.</p>
+        <ul>
+          <li><b>Target repos:</b> <code>modelcontextprotocol/servers</code> (~90k★, ecosystem-central) · <code>strands-agents/samples</code> (~21 open issues, responsive maintainers, named in AWS Builder) · <code>AmazonAppDev</code> samples · MCP TS/Python SDKs.</li>
+          <li><b>Licenses:</b> new agent/SDK-ish project → <b>Apache-2.0</b> (patent grant, matches AWS ecosystem); small tool → MIT. For PRs, upstream's license governs — never add your own.</li>
+          <li><b>Hygiene:</b> license detectable in the repo About section (add at creation), README with install/run, CONTRIBUTING, tests/CI.</li>
+          <li><b>Time budget:</b> recon 2–6h · feature PR w/ tests 8–14h · docs-only 1–3h (eligible but scored "obvious") · weekend plan: Sat claim issue → Sun PR + friction log.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ GLOBAL ============================ -->
+<section id="global">
+  <div class="wrap">
+    <h2>3. Problem Landscape — Global</h2>
+    <p class="sec-sub">Eight domain agents mapped where the world is actually hurting in ways these four devices can reach. Each cluster ends with track hooks. Stats are 2024–2026 sourced.</p>
+
+    <div class="grid g4">
+      <div class="stat"><div class="n">1.4B</div><div class="l">people will be 60+ by 2030; caregiver shortage: OECD needs +60% elder-care workers by 2040</div></div>
+      <div class="stat"><div class="n">1.3B</div><div class="l">live with significant disability (WHO); 2.5B need assistive products, access as low as 3% in low-income countries</div></div>
+      <div class="stat"><div class="n">272M</div><div class="l">children/youth out of school; &gt;50% of 10-year-olds in low/middle-income countries in learning poverty</div></div>
+      <div class="stat"><div class="n">$37B</div><div class="l">package theft (US); 94–99% of 36M annual police alarm responses are false — $1.8B wasted</div></div>
+      <div class="stat"><div class="n">1.8B</div><div class="l">adults insufficiently active (WHO); ~70% of fitness apps churned within 100 days</div></div>
+      <div class="stat"><div class="n">12 min</div><div class="l">average time spent choosing what to watch; 25% of US streamers abandon the search entirely</div></div>
+      <div class="stat"><div class="n">275</div><div class="l">pings/day — knowledge workers interrupted every ~2 minutes; 30–45 min to rebuild dev context</div></div>
+      <div class="stat"><div class="n">8.5%</div><div class="l">of homes have truly integrated smart-home systems; automations die silently with no error surface</div></div>
+    </div>
+
+    <div class="grid g2" style="margin-top:24px">
+      <div class="card">
+        <h4>① Aging &amp; caretaking</h4>
+        <ul>
+          <li>1 in 3 elders socially isolated; loneliness linked to 871,000 deaths/yr (WHO 2025).</li>
+          <li>1 in 4 elders fall yearly, &lt;half tell a doctor — seat-level/toilet falls are exactly what pendants miss ("long lie").</li>
+          <li>6 in 10 dementia patients wander; sundowning peaks 4–8:30pm.</li>
+          <li><span class="tag hot">Gap</span> <b>Alexa Together was killed May 2025</b> — the activity-feed / quiet-day / remote-care layer has <i>no first-party replacement</i>. 42% of elders don't wear prescribed devices; pendant false-positive rates 60–80%.</li>
+        </ul>
+        <p class="chip"><b>Fire TV:</b> the elder screen they already use — big-font telehealth, family dashboard</p>
+        <p class="chip"><b>Alexa+:</b> rebuild the dead Alexa Together layer, voice meds, care circle</p>
+        <p class="chip"><b>Ring:</b> wearable-free anomaly sensing from existing cameras/sensors</p>
+        <p class="chip"><b>Bee:</b> caregiver shift handoff + conversational memory</p>
+      </div>
+
+      <div class="card">
+        <h4>② Accessibility &amp; disability</h4>
+        <ul>
+          <li>Ring alerts are phone-push text only — a Deaf household got wildfire warning only because a neighbour gestured (2026 case).</li>
+          <li>Blind users can't consume camera feeds; Ring's "Video Descriptions" are text-on-phone, not spoken anywhere in the house.</li>
+          <li>ADA digital lawsuits on track for a record ~6,176 in 2026; first European Accessibility Act suits filed Nov 2025.</li>
+          <li>VoiceView exists on Fire TV but navigation order in dense apps is illogical; features ship siloed per impairment (no multi-disability co-design).</li>
+        </ul>
+        <p class="chip"><b>Ring:</b> <i>accessibility is an official priority</i> — "who's at the door, spoken aloud, anywhere"</p>
+        <p class="chip"><b>Alexa+:</b> MCP server turning Ring/Fire TV events into assistive actions</p>
+        <p class="chip"><b>Fire TV:</b> one-task cognitive-load UI, hybrid screen-reader+caption mode</p>
+        <p class="chip"><b>Bee:</b> external-memory prompts for ADHD/AAC users</p>
+      </div>
+
+      <div class="card">
+        <h4>③ Education &amp; learning</h4>
+        <ul>
+          <li>44M teacher deficit by 2030; US recovery stalled 0.5–1.0 grade levels behind; federal tutoring money expired 2024.</li>
+          <li>Kids 0–8: 2:27/day screens (3:48 in low-income homes) — <b>the TV is often the only capable screen</b>.</li>
+          <li>Co-viewing positively correlates with cognition (r=0.14) while background TV is negative — <i>TV is on, the learning layer isn't</i>.</li>
+          <li>Retrieval + spaced practice measurably reduce exam anxiety — but nobody's schedule runs itself. 67% of Parent Centers report families can't find AT guidance.</li>
+        </ul>
+        <p class="chip"><b>Fire TV:</b> co-viewing quiz mode that pauses for voice questions</p>
+        <p class="chip"><b>Alexa+:</b> screen-free homework stand — Socratic hints, not answers</p>
+        <p class="chip"><b>Bee:</b> wearable-triggered spaced recall (education is a priority use case)</p>
+        <p class="chip"><b>Ring:</b> study-block/arrival signals, safe-latch during homework</p>
+        <p class="small" style="margin-top:8px"><b>Compliance note:</b> amended COPPA full compliance deadline was 2026-04-22; Amazon has prior FTC history on kids' voice data — show deletion schedules + no ad profiling.</p>
+      </div>
+
+      <div class="card">
+        <h4>④ Home safety &amp; security</h4>
+        <ul>
+          <li>Alert fatigue: NN/g 2026 study — vague "Motion detected" with no urgency hierarchy → users mute everything → real events missed.</li>
+          <li>51% won't answer unknown knocks (31% of women "definitely not"); elder fraud losses hit $2.4B (2024).</li>
+          <li>Renter camera adoption jumped 42%→54% in a year but alarm adoption is flat (drilling/lease barriers).</li>
+          <li>Small business: 67% of NA businesses hit in 3 years, avg $28k/incident; cameras alone are "insufficient" per 91% of consultants.</li>
+          <li><b>Missing:</b> multi-camera correlation, semantic event reasoning, auditable live-view logs (DV-critical), escalation chains.</li>
+        </ul>
+        <p class="chip"><b>Ring:</b> multi-camera storyline reasoning, business after-hours, renter kits</p>
+        <p class="chip"><b>Alexa+:</b> escalation + orchestration (call neighbour, book repair)</p>
+        <p class="chip"><b>Fire TV:</b> ambient glanceable alert surface instead of phone push</p>
+      </div>
+
+      <div class="card">
+        <h4>⑤ Health, fitness &amp; wellbeing</h4>
+        <ul>
+          <li>1B+ with obesity; &gt;1B with a mental disorder (2% of health budgets); 30.5% of US adults sleep &lt;7h.</li>
+          <li>Home workouts: no form feedback → injury + quit. Peloton fell $4B → $2.49B — value moved to <b>content+software on TVs people already own</b>.</li>
+          <li>LG Smart Cam has real-time pose feedback but it's webOS-only; Fire TV has no CV fitness tier — <i>judges named "CV fitness" as creative</i>.</li>
+          <li>Loneliness mortality risk ≈ 15 cigarettes/day.</li>
+        </ul>
+        <p class="chip"><b>Fire TV:</b> webcam pose correction + family leaderboard (Cube/USB path)</p>
+        <p class="chip"><b>Bee:</b> behavior signals → check-ins; habit adherence nudge loop</p>
+        <p class="chip"><b>Alexa+</b>+<b>Fire TV:</b> conversational coach loop: Alexa → CV → Bee habit nudge</p>
+      </div>
+
+      <div class="card">
+        <h4>⑥ Media, sports &amp; family viewing</h4>
+        <ul>
+          <li>~90% of sports fans find "where to watch" frustrating; 46% missed a game they couldn't find; NFL airs across 10 services.</li>
+          <li>46% say discovery is getting harder; 49% would cancel over it; avg household pays $69/mo across ~5.8 subs.</li>
+          <li>Live-sport captions run ~22s late; elderly EPG task success &lt;25% (channel numbers = 100%).</li>
+          <li>Ads: 70% say the same ads repeat too often; 88% notice repetition on streaming TV.</li>
+        </ul>
+        <p class="chip"><b>Fire TV:</b> one-home sports map · spoiler-safe live companion · ask-about-this-frame VLM · family negotiation agent · senior simple mode</p>
+      </div>
+
+      <div class="card">
+        <h4>⑦ Productivity &amp; developer experience</h4>
+        <ul>
+          <li>275 pings/day; 103 hrs/yr in unnecessary meetings; 48% say work feels "chaotic and fragmented" (MS WTI).</li>
+          <li>Dev context restore: 30–45 min after interruption; incidents span 4+ tools; 44% had an outage from suppressed alerts.</li>
+          <li>70% of personal-informatics apps churn in 100 days; every PKM tool demands title/folder/template before you can write.</li>
+          <li><b>The gap:</b> incumbents (Otter, Notion AI, Copilot) are <i>pull</i> — you must ask. Missing is <i>push</i> memory: passive capture → structured recall across days/tools/surfaces.</li>
+        </ul>
+        <p class="chip"><b>Bee:</b> "what did I commit to?" · resume-coding briefing · decision archaeology · on-call debrief</p>
+        <p class="chip"><b>Alexa+</b>+<b>Bee:</b> home↔wearable continuity (Amazon's own framing)</p>
+      </div>
+
+      <div class="card">
+        <h4>⑧ Smart home, energy &amp; IoT</h4>
+        <ul>
+          <li>Only 8.5% of homes are truly integrated; US electricity at 18¢/kWh (highest since 2001), bills rose 16 straight months; 22.7% energy-burdened.</li>
+          <li>Routines break after upgrades with <b>no event log or error surface</b> — Alexa+ LLM regressions broke 5-year-old routines (The Verge, 2026).</li>
+          <li>ASR errors nearly 2× for Black speakers; regional-dialect error correlation confirmed 2025. 43.5% privacy-blocked on AI; 49% want hybrid local+cloud.</li>
+          <li>Grid: ~160 blackout days/yr (Nigeria); 6–9 outages/month (South Africa). Water damage = 27.6% of homeowner losses; only 1.5% of homes have shut-off devices.</li>
+        </ul>
+        <p class="chip"><b>Alexa+:</b> "Household Doctor" MCP — diagnose why step 3 of a routine failed</p>
+        <p class="chip"><b>Alexa+</b>+<b>Ring</b>+<b>Fire TV:</b> elder left stove on → camera/sensor reasoning → TV alert → voice escalation</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ INDIA ============================ -->
+<section id="india">
+  <div class="wrap">
+    <h2>4. Ground Zero — India</h2>
+    <p class="sec-sub">Nine India-specific agents pressure-tested which problems are real at street level <i>and</i> which honestly fit these tracks. Blunt fit verdicts included — several "obvious" India pitches (agri, traffic) are traps.</p>
+
+    <div class="grid g4">
+      <div class="stat"><div class="n">1:2,363</div><div class="l">doctors per people in UP vs 1:353 in Goa; ~70% of CHC specialist posts vacant</div></div>
+      <div class="stat"><div class="n">230M</div><div class="l">Indians will be 60+ by 2036 (from 100M in 2011); 47% of elders report loneliness</div></div>
+      <div class="stat"><div class="n">76%</div><div class="l">of Class 3 students can't read a Class-2 text (ASER 2024) — up from 67% post-COVID</div></div>
+      <div class="stat"><div class="n">15.8%</div><div class="l">pooled 1-year antihypertensive medication adherence; 53% of diabetics undiagnosed</div></div>
+      <div class="stat"><div class="n">958M</div><div class="l">active internet users · 98% touch Indic content · 579M still offline (top reason: no local-language content)</div></div>
+      <div class="stat"><div class="n">52%</div><div class="l">mixed-error rate for off-the-shelf Whisper on Hinglish; commercial Hindi ASR WER 28–32%</div></div>
+      <div class="stat"><div class="n">68M</div><div class="l">CTV households in India, 40M weekly-active; Fire TV present in 99% of PIN codes</div></div>
+      <div class="stat"><div class="n">26–58%</div><div class="l">COD return-to-origin rate in festive quarters (₹180–240 dead cost per return)</div></div>
+    </div>
+
+    <div class="grid g2" style="margin-top:24px">
+      <div class="card">
+        <h4>🏥 Healthcare access</h4>
+        <ul>
+          <li><b>The front door is often a quack:</b> 68% of rural providers are informal/untrained across 1,519 villages; in Bihar 79.5% of most-visited providers had no formal qualification — but they're open at 9pm and give 3-day credit.</li>
+          <li>eSanjeevani hit 43 Cr consultations — but <b>&gt;93% is provider-assisted</b> (patient travels to a kiosk); the at-home OPD is tiny. No adherence, no follow-up, no home signals.</li>
+          <li>Medication: 11.3 pills/day mean for rural hypertensives; forgetfulness is the #1 reason for skipping.</li>
+          <li>56.5% of 60+ have no schooling; printed medicine strips and English apps are unusable.</li>
+        </ul>
+        <p class="chip"><b>Alexa+:</b> voice med-reminder w/ family escalation · constrained-intent triage → one-tap eSanjeevani handoff</p>
+        <p class="chip"><b>Ring:</b> night-bathroom / no-motion / door-open-too-long → fall &amp; long-lie alert to a daughter 800km away</p>
+        <p class="chip"><b>Fire TV:</b> household health literacy in Telugu/Tamil/Bhojpuri on the screen everyone shares</p>
+      </div>
+
+      <div class="card">
+        <h4>📚 Education &amp; digital divide</h4>
+        <ul>
+          <li>~46M aged 6–17 out of school; 47.2% of Class-1 entrants reach Class 10; 3.57 lakh teacher posts vacant (UP alone 1.93L).</li>
+          <li>84% of rural households own a smartphone but it's <b>shared</b> — only 31.4% of 14–16s own theirs; girls 26.9% vs boys 36.2%. 76% used it for social media vs 57% for studies.</li>
+          <li>Coaching = 43–46% of household education spend at secondary level; 12,598 exam-failure suicides under 30 (2019–24).</li>
+          <li>Byju's collapse ($22bn→0) left category-wide distrust of paid edtech — free/zero-rating/partner-with-school only.</li>
+        </ul>
+        <p class="chip"><b>Fire TV:</b> devices in 99% of PIN codes = the one big screen that's actually in Tier-2/3 homes; co-viewing learning mode</p>
+        <p class="chip"><b>Alexa+:</b> top Alexa India queries are already mixed-code trivia/GK — "a tutor-shaped pattern with no tutor"</p>
+        <p class="chip"><b>Bee:</b> spaced-recall nudges without a screen</p>
+      </div>
+
+      <div class="card">
+        <h4>🔒 Women's safety (constructive framing)</h4>
+        <ul>
+          <li>NCRB 2024: 4.41 lakh crimes against women; NFHS-5: 29.3% faced spousal violence, only ~14% sought help. Cyber complaints vs women: 48,335 → 76,657 in one year.</li>
+          <li>56% of women across 140 cities report transport harassment; 57% of blue/grey-collar women face mobility barriers; 11% quit over unsafe travel.</li>
+          <li><b>SOS apps fail:</b> Himmat had 30,821 users in a 19M city (called a "comprehensive failure" by a parliamentary panel); shake-triggers → 3,646 SOS, 12 substantive actions.</li>
+          <li>PG/hostel opacity: 62% of Hyderabad hostels scored &lt;40/100 on safety; 30% of CCTV non-functional.</li>
+        </ul>
+        <div class="callout" style="margin:10px 0"><b>Best angle: silent escalation chain</b>Ring motion/doorbell or an Alexa whisper → discreet alert with confirmation step (kills false alarms) → tiered escalation: flatmate → building security → family → 112. Works without unlocking a phone; demoable end-to-end.</div>
+        <p class="small"><b>Ethical red lines:</b> no always-on person tracking (that's the abuser pattern — USENIX 2023), no face-recognition watchlists, default-off consent-revocable sharing, human-confirmed escalation before any dispatch.</p>
+      </div>
+
+      <div class="card">
+        <h4>🗣️ Language — the multiplier</h4>
+        <ul>
+          <li>1,369 mother tongues, 22 scheduled; Indic = ~1% of Common Crawl despite 18% of world population. Only 6–11% of Indians speak English (3% rural).</li>
+          <li>Voice is the default: 62% of voice queries are Hindi/Hinglish/regional; rural voice-search preference 62% vs urban 48%.</li>
+          <li><b>Measured conversion gap:</b> local-dialect voice moves task completion from 24% (English text) to 82% — a <b>3.4× multiplier</b>.</li>
+          <li>Telemedicine in Jharkhand: inability to converse in local dialect caused miscommunication <i>where the diagnosis changed direction</i>.</li>
+          <li>Bhashini (govt): 36 text / 23 voice languages, 24M inferences/day — good integration surface. Sarvam-Translate weaker for Bodo/Dogri/Kashmiri/Manipuri/Santali/Sindhi.</li>
+        </ul>
+        <p class="small"><b>Rule of thumb:</b> any concept that ships in Hindi + 2 regional languages materially scores higher on Potential Impact in India.</p>
+      </div>
+
+      <div class="card">
+        <h4>🏪 Small business / kirana</h4>
+        <ul>
+          <li>13–14M kirana stores = 91% of grocery; 7.92 Cr unincorporated establishments; credit gap ₹30 lakh cr.</li>
+          <li><b>After-hours vacuum:</b> 14h weekdays / up to 36h weekend unoccupied. India has the world's highest retail shrinkage — 2.7% of sales (₹9,295.9 cr/yr). Police response 13.5 min urban / 35+ min rural.</li>
+          <li>Khatabook (~5 Cr merchants, 13 languages) does ledger + reminders only — no inventory, no API. Voice-first gap: Alexa is Hindi/Hinglish only, <b>no Tamil/Telugu/Bengali/Marathi even in 2026</b>.</li>
+        </ul>
+        <p class="chip"><b>Ring</b> — strongest fit: "business systems" + "access control" are official priorities. COD handoff log; shutter-close motion escalation.</p>
+        <p class="chip"><b>Alexa+:</b> "Hinglish voice khata" — "Alexa, Ramji ko 500 udhaar"</p>
+      </div>
+
+      <div class="card">
+        <h4>♿ Disability in India</h4>
+        <ul>
+          <li>26.8M official (Census 2011; GBD estimates ~2× for vision/hearing); CWSN are 0.91% of enrolment vs NEP's 2.5–3% target; 43% of children with functional difficulty not enrolled.</li>
+          <li><b>Captions:</b> sign-language interpretation on top-5-language serials ≈ 8%; total accessible GEC &lt;5% vs a 50% target; MIB's 2019 standards <i>still unnotified</i>.</li>
+          <li>Hindi audit of UMANG/UIDAI/MyGov/Paytm: 35–61% of WCAG A/AA criteria <b>failed</b>; 314 certified Indian Sign Language interpreters for 63M Deaf.</li>
+          <li>SC (Nov 2024) struck down Rule 15 as ultra vires; SC (Apr 2025) made digital accessibility part of Article 21 — legally hot.</li>
+        </ul>
+        <p class="chip"><b>Ring → Fire TV/Echo Show:</b> doorbell/motion/smoke → full-screen flash + caption + lamp choreography for Deaf households — <i>highest demo credibility</i></p>
+        <p class="chip"><b>Alexa+:</b> "Who's there?" spoken/spatial camera description in Indian English/Hindi/Tamil for blind users</p>
+      </div>
+    </div>
+
+    <h3>Fit verdicts — where India meets the rubric</h3>
+    <table>
+      <tr><th>India theme</th><th>Best track</th><th>Verdict</th></tr>
+      <tr><td>Elder care / long-lie / meds</td><td><span class="tag alexa">Alexa+</span><span class="tag ring">Ring</span></td><td><b>Strong.</b> Direct hit on caretaking priority + Alexa Together vacuum. High "Potential Impact".</td></tr>
+      <tr><td>Deaf/blind household alerts</td><td><span class="tag ring">Ring</span></td><td><b>Strong.</b> Accessibility is an official Ring priority; no actuator needed; simulator-friendly.</td></tr>
+      <tr><td>Apartment gate / visitor / COD</td><td><span class="tag ring">Ring</span></td><td><b>Strong.</b> Access control + business systems; Playground simulates everything.</td></tr>
+      <tr><td>Civic grievance closure theater</td><td><span class="tag alexa">Alexa+</span></td><td><b>Strong</b> (rubric-wise: cross-service orchestration + persistence). Mock portals on open BBMP data.</td></tr>
+      <tr><td>Vernacular voice health/edu</td><td><span class="tag alexa">Alexa+</span><span class="tag fire">Fire TV</span></td><td><b>Strong multiplier</b> — layer it under any concept rather than pitching language alone.</td></tr>
+      <tr><td>Kirana after-hours security</td><td><span class="tag ring">Ring</span></td><td><b>Moderate-strong</b> — Ring hardware assumed for real deployment; demo via Playground.</td></tr>
+      <tr><td>Learning/co-viewing on the big screen</td><td><span class="tag fire">Fire TV</span></td><td><b>Moderate-strong</b> — family entertainment is a priority; needs disciplined "not just a video player" framing.</td></tr>
+      <tr><td><b>Agriculture advisory</b></td><td>—</td><td><span class="tag hot">Trap</span> <b>Bad headline pitch.</b> No track lists agri; rural broadband ~8%; Alexa voice advisory is the thinnest possible angle. Judges weigh priority categories.</td></tr>
+      <tr><td><b>Urban traffic / air pollution</b></td><td>—</td><td><span class="tag hot">Trap</span> Killer impact story, but systemic — not device-solvable. Pitch the closed-loop grievance agent instead.</td></tr>
+      <tr><td>Generic CCTV analytics</td><td>—</td><td><span class="tag hot">Trap</span> Ring API is Ring-only; unofficial libs = Stage-1 risk; watermarked media since Aug 2026.</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============================ IDEAS ============================ -->
+<section id="ideas">
+  <div class="wrap">
+    <h2>5. 48 Project Concepts (12 per track)</h2>
+    <p class="sec-sub">Each concept was generated against the rubric's own "obvious vs creative" lists, checked for build feasibility in 4 weeks, and given a demo hook for the first 15 seconds of the video. <span class="stars">★★★</span> = agent-recommended top 3; final synthesis in §8.</p>
+
+    <h3><span class="tag fire">Track 1 · Fire TV</span></h3>
+    <table>
+      <tr><th>#</th><th>Concept</th><th>Why it wins</th><th>Tech / Risk</th></tr>
+      <tr><td><span class="stars">★★★</span> 1</td><td><b>Rail That Learns</b><br><span class="small">On-device model reshapes the home rail while you browse</span></td><td>Discovery paralysis (12 min avg); rail visibly morphs live with "why this now" chip — hits the AI-enhanced-viewing creative bullet</td><td>Vega · RN · TFLite recommender over local watch log · <span class="chip">Risk: Low</span></td></tr>
+      <tr><td><span class="stars">★★★</span> 2</td><td><b>MatchBridge</b><br><span class="small">"Where can I watch India vs Australia?" answered instantly</span></td><td>90% of fans frustrated by rights fragmentation; orchestration over rival apps, not a streaming UI; voice+D-pad single flow</td><td>Deep links + TFLite NER + live scores API · <span class="chip">Risk: Med (deep-link coverage)</span></td></tr>
+      <tr><td><span class="stars">★★★</span> 3</td><td><b>FormCoach</b><br><span class="small">TV-camera rep counting + real-time form correction</span></td><td>Judges' own creative example: CV fitness, no wearable/phone; 1.8B inactive adults</td><td>Fire OS Cube webcam · MoveNet TFLite 30fps · <span class="chip">Risk: Med-High (camera/FPS)</span></td></tr>
+      <tr><td>4</td><td><b>Nanna Mode</b> — voice-first huge-type launcher for elders</td><td>EPG task success &lt;25%; redesigns the OS surface itself (multi-modal)</td><td>Vega a11y TurboModule + Alexa nav · <span class="chip">Low</span></td></tr>
+      <tr><td>5</td><td><b>ReadAlong Cinema</b> — D-pad word cursor over live captions</td><td>ASER 76% of Class-3 can't read Class-2 text; co-viewing → learning</td><td>WebVTT + TFLite gloss/translation · <span class="chip">Med</span></td></tr>
+      <tr><td>6</td><td><b>BhashaBar</b> — vernacular search + translit D-pad input, 12 Indic langs</td><td>98% Indic preference; localizes system navigation, not just subtitles</td><td>Indic transliteration TFLite · <span class="chip">Low-Med</span></td></tr>
+      <tr><td>7</td><td><b>Sehat TV</b> — ambient family health dashboard on idle screen</td><td>68M CTV households; shared-surface category no streaming app attempts</td><td>RN widgets + Alexa readout · <span class="chip">Med</span></td></tr>
+      <tr><td>8</td><td><b>CaptionCraft</b> — caption restyle + plain-language simplification</td><td>Uses a brand-new public Vega a11y TurboModule most teams won't find</td><td>Vega 0.24 · <span class="chip">Low</span></td></tr>
+      <tr><td>9</td><td><b>Mood Compass</b> — D-pad directions as mood axes instead of genre grids</td><td>Replaces the grid with a spatial, D-pad-native control impossible on mobile</td><td>Embeddings + radial focus · <span class="chip">Low</span></td></tr>
+      <tr><td>10</td><td><b>Family Council</b> — AI mediates the co-viewing standoff</td><td>Multi-user negotiation flow judges never see on TV</td><td>Alexa voice profiles + LLM ranking · <span class="chip">Med</span></td></tr>
+      <tr><td>11</td><td><b>Gesture Deck</b> — webcam gestures as third input modality</td><td>Voice→gesture→D-pad without mode-switching (multimodal bullet)</td><td>MediaPipe/TFLite · <span class="chip">High</span></td></tr>
+      <tr><td>12</td><td><b>Ask the Scene</b> — pause and ask Alexa about what's on screen</td><td>VLM over actual pixels, not a metadata chatbot — strongest AI-viewing story</td><td>Frame grab → Bedrock VLM · <span class="chip">Med (latency)</span></td></tr>
+    </table>
+    <p class="small"><b>Backups:</b> Nanna Mode (safest feasibility) and CaptionCraft (newest API surface). <b>Avoid:</b> basic streaming UI, simple video player, remote games — explicitly named "obvious".</p>
+
+    <h3><span class="tag alexa">Track 2 · Alexa+ / MCP</span></h3>
+    <table>
+      <tr><th>#</th><th>Concept</th><th>Rubric bullets hit</th><th>MCP tools sketch</th></tr>
+      <tr><td><span class="stars">★★★</span> 1</td><td><b>CareCircle</b><br><span class="small">The Alexa Together replacement — notices <i>absence</i>, not just activity</span></td><td>Cross-service orchestration ✓ · 7-day state persistence ✓ · MCP Apps timeline heatmap ✓</td><td><code>get_vitals_timeline</code> · <code>check_quiet_hours</code> → anomaly · <code>remote_setup_routine</code> (consent token) · <code>escalate_circle</code> · <code>dose_and_visit_status</code></td></tr>
+      <tr><td><span class="stars">★★★</span> 2</td><td><b>CivicTruth</b><br><span class="small">Detects grievance "closure theater" — closed without a resolution artifact</span></td><td>Cross-service (3 portal adapters) ✓ · case ledger ✓ · MCP Apps evidence chart ✓</td><td><code>file_grievance</code> · <code>poll_status</code> · <code>verify_closure_evidence</code> (hash diff) · <code>escalate_upward</code> · <code>cluster_similar</code></td></tr>
+      <tr><td><span class="stars">★★★</span> 3</td><td><b>DoseBridge</b><br><span class="small">Missed dose → executed refill purchase → caregiver ping only after 2 failures</span></td><td>Purchasing flow ✓ · dose ledger persistence ✓ · cross-service ✓ · MCP Apps adherence ring</td><td><code>record_dose</code> · <code>adherence_score</code> · <code>refill_quote</code> · <code>purchase_refill</code> (budget cap) · <code>notify_carer</code></td></tr>
+      <tr><td>4</td><td><b>DialectClinic</b> — vernacular appointment booking that fails gracefully in English</td><td>24%→82% completion gap; persistence + cross-service + intent-confidence visual</td><td><code>book_slot</code> · <code>confirm_intent</code> · <code>rephrase_fallback</code> · <code>appointment_status</code></td></tr>
+      <tr><td>5</td><td><b>HinglishHaat</b> — voice ledger for kirana udhaar</td><td>Purchasing ✓ + persistence + running-balance table; zero saturation</td><td><code>add_entry</code> · <code>ledger_summary</code> · <code>settle_up</code> · <code>nudge_debtor</code></td></tr>
+      <tr><td>6</td><td><b>RoutineLab</b> — observability for silently-broken household routines</td><td>MCP Apps interactive DAG (rare!) + cross-service</td><td><code>list_routines</code> · <code>simulate_routine</code> → failure node · <code>diff_expected_actual</code> · <code>patch_step</code></td></tr>
+      <tr><td>7</td><td><b>WattWise</b> — energy-blindness fix; cheapest-window load shifting</td><td>18¢/kWh, 16 straight months of rises; cross-service + 14-day baseline + chart</td><td><code>read_usage</code> · <code>tariff_forecast</code> · <code>shift_load</code> · <code>bill_estimate</code></td></tr>
+      <tr><td>8</td><td><b>SignalTongue</b> — Deaf/blind access layer over camera + notifications</td><td>Accessibility + MCP Apps live caption panel</td><td><code>transcribe_stream</code> · <code>describe_scene</code> · <code>haptic_pattern</code> · <code>sign_summary</code></td></tr>
+      <tr><td>9</td><td><b>Saath</b> — anonymous vernacular mental-health check-in (84.5% treatment gap)</td><td>Persistence + risk escalation; hard-fail to real hotline numbers</td><td><code>mood_entry</code> · <code>risk_classify</code> · <code>escalate_crisis</code> · <code>streak_support</code></td></tr>
+      <tr><td>10</td><td><b>VayuGuard</b> — AQ-driven asthma action plan</td><td>Cross-service (AQ + weather + pharmacy) + purchasing</td><td><code>aqi_now</code> · <code>forecast_trigger</code> · <code>med_refill_check</code> · <code>action_plan_state</code></td></tr>
+      <tr><td>11</td><td><b>DaadiKiAwaaz</b> — shared family vernacular media room w/ device handoff</td><td>Media flow ✓ + persistence + household handoff</td><td><code>request_track</code> · <code>queue_family</code> · <code>handoff_device</code> · <code>history_shared</code></td></tr>
+      <tr><td>12</td><td><b>CarryOver</b> — cross-session household memory that survives restarts</td><td>Pure state-persistence bullet + memory inspector (thin unless well-motivated)</td><td><code>recall_ctx</code> · <code>resume_task</code> · <code>merge_household_note</code> · <code>forget_on_request</code></td></tr>
+    </table>
+    <div class="callout warn"><b>Avoid (named by agents):</b> weekend trip/hotel itineraries · restaurant/Yelp-style finders · Canva-style builders · big-brand smart-home hubs · pure Q&amp;A bots — all saturated or explicitly non-qualifying ("wrapper around an existing API").</div>
+
+    <h3><span class="tag bee">Track 3 · Bee</span></h3>
+    <table>
+      <tr><th>#</th><th>Concept</th><th>Why it wins</th><th>Bee surface</th></tr>
+      <tr><td><span class="stars">★★★</span> 1</td><td><b>Context Time Machine</b><br><span class="small">Restore dev flow in 60s, not 40 minutes</span></td><td>DevX is a priority; realtime bullet; pure client — feasible in days</td><td><code>bee stream</code> + <code>bee_search --since &lt;last-commit&gt;</code> + transcripts, diffed against <code>git log</code>; proxy SSE live pulse</td></tr>
+      <tr><td><span class="stars">★★★</span> 2</td><td><b>Commitment Ledger</b><br><span class="small">"What did I actually promise in that meeting?"</span></td><td>Facts/insight depth ✓ + self-improvement ✓; confirm-flow kills extraction errors</td><td>transcript → LLM promise extractor → <code>bee_create_fact</code>/<code>bee_create_todo</code> → <code>bee_get_todo_suggestions</code> reconciliation → <code>bee_get_insights</code> keep-rate</td></tr>
+      <tr><td><span class="stars">★★★</span> 3</td><td><b>Shift Handoff Briefing</b><br><span class="small">Bee → Alexa+ → Fire TV caregiver handoff</span></td><td><b>Cross-device orchestration = highest-value rubric bullet</b>; 15.8% med adherence, no handoff tools exist</td><td><code>bee_get_daily_summary</code> + todos + facts(tag:meds) → Alexa MCP reads aloud → Fire TV dashboard</td></tr>
+      <tr><td>4</td><td><b>Spaced Recall Drill</b> — your conversations become quiz cards</td><td>Education priority; retrieval practice cuts exam anxiety</td><td><code>bee_list_facts</code> + daily summary → generated Q/A → Alexa night drill</td></tr>
+      <tr><td>5</td><td><b>Decision Archaeology</b> — click a commit, hear the sentence that caused it</td><td>DevX; insight depth; searchable corpus via <code>bee sync</code></td><td><code>bee_search "decided/rejected/because"</code> ↔ <code>git log</code></td></tr>
+      <tr><td>6</td><td><b>Focus Sentinel</b> — detects interruption, auto-saves working set, fires DND routine</td><td>Realtime ✓; 275 pings/day</td><td><code>bee stream</code> break detection → Alexa+ routine</td></tr>
+      <tr><td>7</td><td><b>Memory Gardener</b> — self-healing facts (merge/expire contradictions)</td><td>Self-improvement bullet; memory precision visibly climbs</td><td><code>bee_list_facts --unconfirmed</code> + contradiction scan + <code>bee_update_fact</code></td></tr>
+      <tr><td>8</td><td><b>Now/Next Ambient Board</b> — ADHD/autism executive-function scaffold on always-on screen</td><td>Cross-device; real accessibility impact</td><td><code>bee_get_today</code> + recent activity → Fire TV card</td></tr>
+      <tr><td>9</td><td><b>Consent Mirror</b> — browse/delete exactly what Bee knows about you</td><td>Directly defuses the wearable "creep" factor; judge-bait for trust</td><td><code>bee_list_facts</code> / <code>bee_get_location_clusters</code> → <code>bee_delete_fact</code></td></tr>
+      <tr><td>10</td><td><b>Commit-to-Code Coach</b> — PR-ready rationale snippet from your own conversations</td><td>DevX; narrower cousin of #5</td><td><code>bee_search --filter conversations --since</code> scoped by branch</td></tr>
+      <tr><td>11</td><td><b>Insight Autopsy</b> — weekly self-review with one behavioral nudge</td><td>Self-improvement; fights the 100-day churn cliff</td><td><code>bee_get_insights</code> + summaries → <code>bee_create_todo</code></td></tr>
+      <tr><td>12</td><td><b>ASER Story Teller</b> — spoken-practice error map for a tutor</td><td>Education; <span class="tag hot">child-data consent required</span></td><td><code>bee_get_conversation_transcript</code> → mistake-pattern report</td></tr>
+    </table>
+    <div class="callout warn"><b>Avoid:</b> daily digest / notification relayer (explicitly "obvious") · generic "chat with my data" RAG wrapper · raw scrolling transcript life-logger (privacy magnet). <b>Hedge:</b> Apple Watch (iOS) is the device-free path; Android Bee dev mode needs a paired device.</div>
+
+    <h3><span class="tag ring">Track 4 · Ring</span></h3>
+    <table>
+      <tr><th>#</th><th>Concept</th><th>Why it wins</th><th>API surface</th></tr>
+      <tr><td><span class="stars">★★★</span> 1</td><td><b>GateStory</b><br><span class="small">Multi-cam visit <i>storyline</i>, not a clip dump</span></td><td>Rubric's literal bullets: multi-camera correlation + access control + event triggers</td><td>N webhooks → EventBridge correlation (entity + 90s window) → DynamoDB timeline; snapshots + MP4; Alexa+ MCP "who visited 6–8pm?" + Fire TV strip</td></tr>
+      <tr><td><span class="stars">★★★</span> 2</td><td><b>HushBridge</b><br><span class="small">Video semantics as non-visual alerts for Deaf/HoH households</span></td><td>Accessibility priority; non-security reframe of events everyone else alerts on; pure display — no actuator needed</td><td>HMAC <code>motion(human)</code>+<code>button_press</code> → Lambda → Alexa Proactive Events + Fire TV flash/caption; Chime = door-side ack</td></tr>
+      <tr><td><span class="stars">★★★</span> 3</td><td><b>LongLie</b><br><span class="small">Absence-after-presence sentinel for elders</span></td><td>Caretaking + event logic on the <i>absence</i> of an event (genuinely novel); 23% of Indian 60+ fell in 2yrs</td><td>webhook starts dwell timer → no re-event + snapshot poll → escalate: Alexa call to caregiver + Fire TV amber bar; Chime "I'm fine" ack scene</td></tr>
+      <tr><td>4</td><td><b>AfterHours Vacuum</b> — small-biz shutter-close motion escalation</td><td>Business systems + event triggers; 14–36h discovery lag; 2.7% Indian shrinkage</td><td><code>motion(human)</code> + schedule in DynamoDB → clip → owner escalation</td></tr>
+      <tr><td>5</td><td><b>ProofParcel</b> — tamper-evident drop receipt killing delivery-proof forgery</td><td>Non-security; India COD RTO 26–58%</td><td><code>button_press</code> + snapshot + HMAC-signed receipt to merchant</td></tr>
+      <tr><td>6</td><td><b>ShiftSeal</b> — open/close compliance attestation</td><td>Access control <i>without a lock</i> (honest framing: attestation, not enforcement)</td><td>first <code>motion(human)</code> vs schedule → manager attests; missed close escalates</td></tr>
+      <tr><td>7</td><td><b>AlertDiet</b> — 40 pings collapse into 1 verified digest</td><td>Fixes alert fatigue (94–99% false alarms); very high feasibility</td><td>dedupe + dwell window + human-only filter + zone weight</td></tr>
+      <tr><td>8</td><td><b>SceneSpeak</b> — described video for blind users</td><td>Accessibility; "man in blue at gate, 8s" spoken</td><td>WHEP frame → caption/VLM → Alexa+ spoken scene</td></tr>
+      <tr><td>9</td><td><b>WanderTrace</b> — dementia night-exit pattern detection</td><td>Caretaking + multi-cam chaining; 12M+ Indian dementia cases</td><td>odd-hour <code>motion(human)</code> loops at gate → timeline + Alexa call</td></tr>
+      <tr><td>10</td><td><b>WindowMatch</b> — vehicle + ETA + button_press = "courier actually here"</td><td>Event-trigger engineering; kills false alerts</td><td>correlate <code>vehicle</code> + <code>button_press</code> webhooks</td></tr>
+      <tr><td>11</td><td><b>HelperRoster</b> — PG/shared-flat expected-person windows</td><td>Access control, privacy-framed; India PG angle</td><td>time-boxed expected windows; unexpected human motion → discreet chime + digest</td></tr>
+      <tr><td>12</td><td><b>ChimeScript</b> — the one write endpoint (Chime audio) used as a storefront state display</td><td>Unconventional use of the only sanctioned write API</td><td><code>button_press</code> → store chime changes state</td></tr>
+    </table>
+    <div class="callout warn"><b>Avoid:</b> lock/light/alarm "actuator hub" (no official endpoint; unofficial lib = disqualification risk) · prettier motion alerts / basic live view (explicitly obvious) · raw-clip face-recognition vault (watermark + PII/ToS problems).</div>
+  </div>
+</section>
+
+<!-- ============================ SKILLS ============================ -->
+<section id="skills">
+  <div class="wrap">
+    <h2>6. ECC Skill Stack for This Hackathon</h2>
+    <p class="sec-sub">Inventory audit of this machine: <b>442 entries / 305 unique skills</b> across <code>~/.config/opencode/skills</code> (283), <code>~/.agents/skills</code> (137), <code>~/.claude/skills</code> (22) — plus ~110 commands in <code>~/.config/opencode/commands</code>, 26 agents in <code>opencode.json</code>, 6 rule files (172 lines), and 37 MCP servers. Roughly <b>60–65% is irrelevant</b> to this event (aesthetic themes, homelab, healthcare-CDSS, customs, prediction markets…).</p>
+
+    <div class="grid g3">
+      <div class="card">
+        <h4>Lean starter kit (10 skills)</h4>
+        <ol>
+          <li><code>orch-build-mvp</code> — vertical-slice MVP bootstrapping</li>
+          <li><code>plan-orchestrate</code> — decompose plan → agent chains</li>
+          <li><code>frontend-design</code> — anti-templated UI for TV/app screens</li>
+          <li><code>web-design-guidelines</code> — accessibility/UX audit pass</li>
+          <li><code>e2e-testing</code> — Playwright proof-it-works evidence</li>
+          <li><code>verification-loop</code> — block "done" claims without proof</li>
+          <li><code>security-review</code> — keys, auth, device tokens</li>
+          <li><code>github-ops</code> — PR/CI/release for judging + OSS challenge</li>
+          <li><code>ui-demo</code> — demo recording for the submission video</li>
+          <li><code>deep-research</code> — SDK/rules research</li>
+        </ol>
+        <p class="small">+ <code>opensource-pipeline</code> as #11 only if entering the Open Source mini challenge.</p>
+      </div>
+      <div class="card">
+        <h4>Phase → skill mapping</h4>
+        <p><b>Design (TV/app UI):</b> <span class="chip">design-taste-frontend</span> <span class="chip">frontend-design</span> <span class="chip">web-design-guidelines</span> <span class="chip">shadcn</span> <span class="chip">click-path-audit</span></p>
+        <p><b>MCP/Agents (Alexa+):</b> <span class="chip">api-connector-builder</span> <span class="chip">agent-harness-construction</span> <span class="chip">agent-architecture-audit</span> <span class="chip">rote-adapter-create</span></p>
+        <p><b>Cloud/AWS:</b> <span class="chip">deployment-patterns</span> <span class="chip">docker-patterns</span> <span class="chip">uncloud</span> <span class="chip">flox-environments</span></p>
+        <p><b>Testing:</b> <span class="chip">tdd-workflow</span> <span class="chip">ai-regression-testing</span> <span class="chip">eval-harness</span></p>
+        <p><b>Security:</b> <span class="chip">security-review</span> <span class="chip">security-scan</span> <span class="chip">safety-guard</span> <span class="chip">gateguard</span></p>
+        <p><b>Research:</b> <span class="chip">research-ops</span> <span class="chip">exa-search</span> <span class="chip">market-research</span> <span class="chip">product-lens</span></p>
+        <p><b>Demo video:</b> <span class="chip">remotion-video-creation</span> <span class="chip">ui-demo</span> <span class="chip">video-editing</span> <span class="chip">manim-video</span></p>
+        <p><b>Orchestration:</b> <span class="chip">blueprint</span> <span class="chip">parallel-execution-optimizer</span> <span class="chip">delivery-gate</span> <span class="chip">orch-add-feature</span></p>
+        <p><b>Submission:</b> <span class="chip">github-ops</span> <span class="chip">git-workflow</span> <span class="chip">architecture-decision-records</span></p>
+      </div>
+      <div class="card">
+        <h4>Critical gaps (build these first)</h4>
+        <ul>
+          <li><b>No AWS-native skill</b> — nothing on Lambda/API Gateway/DynamoDB/Bedrock/CDK. <i>Highest-leverage add; also no AWS MCP configured</i> (37 MCPs exist: playwright, exa, github, context7, fal-ai… but zero AWS).</li>
+          <li><b>No MCP-server-authoring skill</b> — <code>api-connector-builder</code> builds API connectors, not <code>@modelcontextprotocol/sdk</code> servers (the core of the Alexa+ track).</li>
+          <li><b>No Fire TV / 10-foot UX skill</b> — nothing on ADB, Fire OS, Vega, remote/focus navigation patterns.</li>
+          <li><b>No Alexa+/ASK skill</b> — no manifest/dialog guidance.</li>
+          <li><b>No Ring / Bee skill</b> — no API/event-stream or wearable patterns.</li>
+          <li><b>No pitch/judging-rubric skill</b> for the submission itself.</li>
+        </ul>
+        <div class="callout info" style="margin-bottom:0"><b>Warning:</b> <code>roku</code> in the inventory is a <i>visual theme from typeui.sh</i>, not Roku/Fire TV platform knowledge. Easy to misread.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ STRATEGY ============================ -->
+<section id="strategy">
+  <div class="wrap">
+    <h2>7. Winning Strategy</h2>
+
+    <div class="grid g2">
+      <div class="card">
+        <h4>Track odds — slots ÷ entry friction</h4>
+        <table>
+          <tr><th>Track</th><th>Places</th><th>Entry friction</th></tr>
+          <tr><td><b>Alexa+</b></td><td>3 ($44K)</td><td>Medium — partner tools gated, but MCP/simulation paths are wide open. No hardware.</td></tr>
+          <tr><td><b>Fire TV</b></td><td>3 ($44K)</td><td>Low — any framework, simulator accepted; but likely the biggest volume.</td></tr>
+          <tr><td><b>Ring</b></td><td>2 ($20K)</td><td>Low-medium — Playground (May 2026) removed the hardware barrier entirely.</td></tr>
+          <tr><td><b>Bee</b></td><td>2 ($20K)</td><td><b>High</b> — sharpest filter: you need a Bee device or an Apple Watch running Bee software.</td></tr>
+        </table>
+        <p class="small">Per-track distribution is unpublished until after the deadline. Registrants ≠ competitors: AWS Lambda went 3,713 registrants → 331 submissions (~9%); expect a realistic field of ~200–500 across all tracks.</p>
+        <div class="callout ok" style="margin-bottom:0"><b>Best odds heuristic:</b> highest slots + lowest friction + strongest rubric story = <b>Alexa+ (MCP)</b> or <b>Ring (Playground)</b>. Bee has the fewest slots but the most self-selecting pool. Fire TV has the most slots but probably the most entries.</div>
+      </div>
+
+      <div class="card">
+        <h4>What winners actually look like</h4>
+        <ul>
+          <li><b>The rules literally name the winners.</b> Each track publishes an "obvious vs creative" list — pick a listed creative bullet and prove it on video.</li>
+          <li>Recent Amazon winners are <b>narrow and practical, not flashy</b> (Amazon Nova 2026: a screen-aware voice agent, a dementia assistant; AWS Lambda 2025: one problem, one sentence, working pipeline).</li>
+          <li><b>Balance beats depth</b> — the biggest score-killer is over-indexing on one criterion (Devpost judge guidance).</li>
+          <li><b>First 30s = baseline score:</b> elevator pitch in the opening seconds, finished-looking home screen, one wow moment early, no scaffolding visible.</li>
+          <li>Video is the whole judgment — judges may never run your code. Text + images + video are all they see.</li>
+        </ul>
+        <h4>Friction-log blueprint (up to +10%)</h4>
+        <p class="small">Required fields per entry: <b>task attempted → steps taken → expected vs actual → severity → workaround → actionable suggestion</b>. Log as-you-go in <code>FRICTION_LOG.md</code> within 60 min of friction; 6–12 entries; exact command, verbatim error, docs URL + date, environment, time lost.</p>
+        <p class="small"><b>Strong:</b> "Followed Ring Get Started §3 → redirect loop, 401 on callback; docs reference deprecated <code>client_id</code>. Severity High. Workaround: minted token via API explorer. Suggestion: update §3 param names + error table."<br><b>Weak:</b> "Docs were confusing." (No repro, no fix.)</p>
+        <p class="small">Mechanics: Amazon's internal review team scores logs at Stage 1 and forwards up to 10% to the Stage 2 panel — it's a multiplier on viability, not a rescue.</p>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <b>Three-layer trick: stack rubric bullets</b>
+      The winning move is one concept that hits <i>multiple</i> creative bullets at once — e.g. Ring GateStory (multi-cam + access control + event triggers) + AWS Builder mini challenge (Bedrock + AgentCore pipeline) + Open Source PR to <code>strands-agents/samples</code> = one project, three prizes' worth of rubric coverage. One track prize + one mini-challenge prize max, so pick the mini challenge with the cheapest incremental work (AWS Builder via Kiro Crew, or a feature PR with tests).
+    </div>
+
+    <div class="callout warn">
+      <b>Last-mile killers (double-check before submitting)</b>
+      Runtime import of required tech (not README mentions) · video showing the right device/simulator · public YouTube (not unlisted) &lt;3:00 English · license detectable at repo top · collab invites sent <i>and accepted</i> (7-day expiry) · AWS credits form by Oct 21 noon PT · product feedback covering every tool · submit ≥3 hours before Oct 23 noon PDT (YouTube processing can take hours) · tear down AWS after testing (judging Nov 9–20).
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PICKS ============================ -->
+<section id="picks">
+  <div class="wrap">
+    <h2>8. Top 5 Recommended Projects</h2>
+    <p class="sec-sub">Synthesis across all 30 agents: scored on rubric coverage (creative bullets), track fit, Potential Impact (India angle included), demo wow with simulators only, and 4-week buildability for a small team.</p>
+
+    <div class="rank">
+      <div class="no">1</div>
+      <div>
+        <h4><span class="tag ring">Ring</span> GateStory — multi-camera visit storyline <span class="stars">★★★</span></h4>
+        <p><b>One-liner:</b> "Who came to the gate, in what order, did they actually reach the door?" — correlation across cameras into one narrative timeline, queryable by voice.</p>
+        <p><b>Why:</b> hits three creative bullets simultaneously (multi-camera correlation · access control · event triggers); Playground simulates 3 synthetic devices with zero hardware; India angle (PG/hostel visitor logs, apartment gate chaos) makes Potential Impact concrete. Alexa+ MCP query layer + Fire TV timeline strip = cross-device bonus.</p>
+        <p><span class="chip">API: webhooks + WHEP + snapshots</span><span class="chip">Stack: Lambda · EventBridge · DynamoDB · MCP</span><span class="chip">Risk: Low-Med</span><span class="chip">+ AWS Builder mini</span></p>
+      </div>
+    </div>
+
+    <div class="rank">
+      <div class="no">2</div>
+      <div>
+        <h4><span class="tag alexa">Alexa+</span> CareCircle — the Alexa Together replacement <span class="stars">★★★</span></h4>
+        <p><b>One-liner:</b> A shared eldercare state graph that notices <i>absence</i> — "Alexa hasn't heard from Dad in 14 hours" — with a consent-gated care circle.</p>
+        <p><b>Why:</b> Amazon <i>discontinued</i> its own product in this space (May 2025) — the gap is real, first-party, and something the Alexa team will recognize instantly. Cross-service orchestration ✓ + 7-day persistence ✓ + MCP Apps heatmap ✓. India framing: 230M elders by 2036, 47% report loneliness, med adherence 15.8%. Pure simulation — no hardware, no gating.</p>
+        <p><span class="chip">5 MCP tools (quiet-hours anomaly, escalate, dose status)</span><span class="chip">Sim: pharmacy/calendar/sensor mocks</span><span class="chip">Risk: Med (consent framing)</span></p>
+      </div>
+    </div>
+
+    <div class="rank">
+      <div class="no">3</div>
+      <div>
+        <h4><span class="tag fire">Fire TV</span> Ask the Scene + Rail That Learns hybrid <span class="stars">★★★</span></h4>
+        <p><b>One-liner:</b> Pause anything and ask Alexa about the actual frame — "why is he angry?" — answered by a VLM over the frozen pixels, with a home rail that re-ranks live as you browse.</p>
+        <p><b>Why:</b> the strongest honest "AI-enhanced viewing" story (not a metadata chatbot), plus the rail gives you the visible wow in the first 3 seconds of the demo. Vega simulator is submission-valid, so no hardware dependency. Pair with <b>ReadAlong Cinema</b> (D-pad word cursor) if you want an India/education impact layer: ASER's 76% number is a judge-ready stat.</p>
+        <p><span class="chip">Stack: Vega/RN · frame grab → Bedrock VLM · Media Session</span><span class="chip">Risk: Med (VLM latency — pre-cache hot scenes)</span></p>
+      </div>
+    </div>
+
+    <div class="rank">
+      <div class="no">4</div>
+      <div>
+        <h4><span class="tag ring">Ring</span> HushBridge <span class="tag bee">/</span><span class="tag alexa">Alexa+</span> DoseBridge (pick by team hardware)</h4>
+        <p><b>HushBridge:</b> Ring events → full-screen Fire TV flash + caption + lamp choreography for Deaf households. Accessibility is an official Ring priority, no actuator needed, zero Stage-1 risk, highest demo credibility (simulate <code>button_press</code> → TV banner in &lt;1s). India: 63M Deaf, 314 ISL interpreters, alerts are phone-push only.</p>
+        <p><b>DoseBridge:</b> if your team prefers Alexa+ — the purchasing-flow rubric bullet is rarely attempted: missed dose → auto-quoted refill → one-tap purchase → caregiver ping only after two failures. Wrap it as "wellness, not medical advice."</p>
+        <p><span class="chip">Risk: Low (both)</span><span class="chip">Impact story: quotable stat included</span></p>
+      </div>
+    </div>
+
+    <div class="rank">
+      <div class="no">5</div>
+      <div>
+        <h4><span class="tag bee">Bee</span> Shift Handoff Briefing <span class="stars">★★★</span> <small>(only if you have an Apple Watch/Bee)</small></h4>
+        <p><b>One-liner:</b> Say "Alexa, handoff" and yesterday's care context — todos, facts, meds — streams into the room and onto the Fire TV dashboard.</p>
+        <p><b>Why:</b> cross-device orchestration is Bee's highest-value rubric bullet and this is the cleanest demo of it; caregiver shift-handoff has no real tooling. <b>Eligibility check first:</b> iOS Apple Watch path works without buying hardware; Android Bee dev mode requires a paired device. Video must show <code>bee stream</code>/proxy SSE <i>live</i>.</p>
+        <p><span class="chip">Bee: daily summary + todos + facts(tag:meds)</span><span class="chip">Risk: Med (two-device demo)</span></p>
+      </div>
+    </div>
+
+    <div class="callout ok">
+      <b>Decision shortcut</b>
+      → Have an Apple Watch or Bee device? <b>Bee</b> (fewest slots, most self-selected pool).<br>
+      → Want max rubric coverage with no hardware? <b>Alexa+ MCP</b> (3 places, simulation path wide open, AWS Builder stacks cleanly).<br>
+      → Want the strongest India impact story? <b>Ring</b> — GateStory or HushBridge via the Playground.<br>
+      → Confident with TV/10-foot UX and a simulator? <b>Fire TV</b> on Vega (3 places, biggest mindshare).
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TIMELINE ============================ -->
+<section id="timeline">
+  <div class="wrap">
+    <h2>9. T-Minus Plan (Sept 27 → Oct 23)</h2>
+    <p class="sec-sub">26 days. Concept discipline in week 1 matters more than code speed in week 3.</p>
+
+    <div class="timeline">
+      <div class="tl"><b>Sep 28–30 · Concept lock</b><span>Pick track + one rubric-mapped concept from §5. Verify hardware (Apple Watch? Fire TV Cube camera?) and register: Ring Developer console / Bee Developer Mode / Vega tools / MCP Inspector. Create <code>FRICTION_LOG.md</code> + <code>PRODUCT_FEEDBACK.md</code> on day one.</span></div>
+      <div class="tl"><b>Oct 1–7 · Skeleton + first wow</b><span>Working end-to-end thin slice: required tech called at runtime (this is Stage 1). Daily friction entries. Stand up the MCP server (or Ring webhooks, or Vega app) by Oct 4.</span></div>
+      <div class="tl"><b>Oct 8–14 · Depth on the creative bullets</b><span>Feature freeze by Oct 14. Write the 3-min script by hand (generic LLM scripts get flagged). Capture B-roll: MCP Inspector traffic, simulator runs, live Bee data, Playground event sims.</span></div>
+      <div class="tl"><b>Oct 15–19 · Shoot + edit</b><span>OBS → CapCut. Burned-in captions, chapters, CC0/YouTube Audio Library music only. Self-score against the 4 criteria (§7 checklist).</span></div>
+      <div class="tl"><b>Oct 20 · Upload video</b><span>Public YouTube, "Not for Kids" — processing can take hours and you get the link before it finishes. Start the Devpost draft.</span></div>
+      <div class="tl"><b>Oct 21 · AWS credits form (noon PT) + repo polish</b><span>License detectable at top · README run instructions · required tech imported and called · Mermaid arch diagram if entering AWS Builder.</span></div>
+      <div class="tl"><b>Oct 22 · Collaborators + Open Source PR</b><span>Send GitHub invites <b>today</b> to testing@devpost.com + the six Amazon handles (invites expire in 7 days; acceptance required). Land your OSS contribution PR (need not be merged).</span></div>
+      <div class="tl"><b>Oct 23 · Submit by ~9am PDT</b><span>Final self-check against §7 pitfalls, then submit ≥3 hours before the 12:00pm PDT deadline. No edits after.</span></div>
+      <div class="tl"><b>Nov 9–20 · Judging</b><span>Keep AWS resources torn down; be ready to answer reviewer questions on the repo.</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><b>Method:</b> 30 parallel research agents across 5 waves — 8 track/tooling agents · 8 global problem-domain agents · 8 India ground-reality agents · 6 solution-ideation + playbook agents · 1 ECC skill-inventory audit. Primary sources: amazonappdev2026.devpost.com (rules/FAQ), developer.amazon.com (Vega/Fire TV/Ring/Alexa+ docs), modelcontextprotocol.io, docs.bee.computer, WHO/UNESCO/ASER/NCRB/NFHS/TRAI/IAMAI/PIB, Devpost judging guides.</p>
+    <p class="src">Report generated Sept 27, 2026 · This is an internal research artifact — verify prize amounts, deadlines and API details against the live Devpost rules page before submitting.</p>
+  </div>
+</footer>
+
+</body>
+</html>
