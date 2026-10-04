@@ -1,0 +1,50 @@
+{
+  "name": "gatestory",
+  "version": "1.0.0",
+  "description": "Multi-Camera Visit Storylines for Ring (Amazon Hackathon 2026)",
+  "type": "module",
+  "main": "dist/src/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/src/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "tsc --noEmit",
+    "poll": "tsx scripts/poll_ring_history.ts",
+    "send-fixture": "tsx scripts/send_signed_fixture.ts"
+  },
+  "keywords": [
+    "ring",
+    "mcp",
+    "amazon-hackathon",
+    "event-correlation",
+    "smart-home"
+  ],
+  "author": "Vaishnav",
+  "license": "Apache-2.0",
+  "packageManager": "pnpm@10.20.0",
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.1146.0",
+    "@aws-sdk/client-dynamodb": "^3.1146.0",
+    "@aws-sdk/lib-dynamodb": "^3.1146.0",
+    "@modelcontextprotocol/sdk": "^1.32.0",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.5",
+    "express": "^5.2.1",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.15",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.4",
+    "@types/supertest": "^7.2.1",
+    "supertest": "^7.3.1",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  }
+}

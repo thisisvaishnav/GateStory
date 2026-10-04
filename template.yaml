@@ -1,0 +1,158 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  GateStory — Multi-Camera Visit Storylines for Ring (Amazon Hackathon 2026)
+  Track 4: Ring (+ AWS Builder mini-challenge)
+
+Globals:
+  Function:
+    Timeout: 15
+    MemorySize: 256
+    Runtime: nodejs22.x
+    Architectures:
+      - arm64
+    Environment:
+      Variables:
+        NODE_ENV: production
+        DYNAMODB_TABLE_NAME: !Ref GateStoryTable
+        RING_HMAC_KEY: !Ref RingHmacKey
+        NOVA_ENRICHMENT_FLAG: !Ref NovaEnrichmentFlag
+
+Parameters:
+  RingHmacKey:
+    Type: String
+    NoEcho: true
+    Description: Ring Developer Console HMAC signature key for webhook verification
+    Default: ''
+
+  NovaEnrichmentFlag:
+    Type: String
+    Description: Enable Amazon Bedrock Nova Lite story enrichment
+    Default: 'false'
+
+Resources:
+  # HTTP API Gateway (v2)
+  GateStoryHttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowMethods:
+          - GET
+          - POST
+          - OPTIONS
+        AllowHeaders:
+          - Content-Type
+          - X-Signature
+          - Authorization
+        AllowOrigins:
+          - '*'
+
+  # Single Unified API Lambda Function
+  GateStoryApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./
+      Handler: dist/src/index.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref GateStoryTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+              Resource: '*'
+      Events:
+        WebhookPost:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref GateStoryHttpApi
+            Path: /api/ring/webhook
+            Method: post
+        PollPost:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref GateStoryHttpApi
+            Path: /api/ring/poll
+            Method: post
+        RingStatus:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref GateStoryHttpApi
+            Path: /api/ring/status
+            Method: get
+        VisitsGet:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref GateStoryHttpApi
+            Path: /api/visits
+            Method: get
+        HeatmapGet:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref GateStoryHttpApi
+            Path: /api/heatmap
+            Method: get
+        HealthGet:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref GateStoryHttpApi
+            Path: /health
+            Method: get
+        McpSse:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref GateStoryHttpApi
+            Path: /mcp/sse
+            Method: get
+        McpMessages:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref GateStoryHttpApi
+            Path: /mcp/messages
+            Method: post
+
+  # DynamoDB Single Table
+  GateStoryTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: gatestory-main
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+
+Outputs:
+  HttpApiUrl:
+    Description: HTTP API Gateway endpoint URL for GateStory
+    Value: !Sub "https://${GateStoryHttpApi}.execute-api.${AWS::Region}.amazonaws.com"
+
+  WebhookUrl:
+    Description: Production Webhook URL to register in Ring Developer Console
+    Value: !Sub "https://${GateStoryHttpApi}.execute-api.${AWS::Region}.amazonaws.com/api/ring/webhook"
+
+  DynamoDbTableName:
+    Description: DynamoDB Table Name
+    Value: !Ref GateStoryTable
