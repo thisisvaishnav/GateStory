@@ -85,7 +85,15 @@ Before implementing a new feature, route, MCP tool, or ingestion path, verify:
 - The household log in `src/ui/public/` relies on clean semantic CSS and CSS custom properties (`--bg-color`, `--card-bg`, etc.).
 - Avoid inline duplicate style declarations. Parameterize camera status cards and timeline items.
 
-### 6. Git & Build Hygiene
+### 6. Simplified Technical English (ASD-STE100) Specification
+- All text written for users, UI elements, status badges, buttons, tool descriptions, and website messages MUST follow the **ASD-STE100 (Simplified Technical English)** standard.
+- **Rule 1 (Simplicity & Clarity)**: Use short, direct, unambiguous sentences (keep sentences under 20 words for instructions and 25 words for descriptions).
+- **Rule 2 (Voice & Tone)**: Write in active voice. Use imperative verbs for buttons and actions (e.g., "Poll Ring API", "Reset Log", "Send Signed Fixture", "Open Snapshot").
+- **Rule 3 (One Word, One Meaning)**: Do not use slang, idioms, or colloquialisms (e.g., use "transient motion" or "recorded", not buzzwords).
+- **Rule 4 (No Passive / Vague Phrasing)**: Replace passive or ambiguous phrasing with clear cause-and-effect statements.
+- **Rule 5 (Clarity in UI Messages)**: All alerts, empty states, and status indicators must clearly explain what happened and what action to take.
+
+### 7. Git & Build Hygiene
 - `dist/`, `.env`, coverage reports, and test caches must never be committed.
 - Biome check (`pnpm lint`) and TypeScript check (`pnpm typecheck`) must pass with zero errors.
 
