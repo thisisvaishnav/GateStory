@@ -114,7 +114,7 @@ pnpm send-fixture
 pnpm tsx src/mcp/cli.ts
 ```
 
-Open `http://localhost:3000` to view the warm **Household Log UI**, test all 12 fixture scenarios with one click, and inspect the spatial dwell heatmap!
+Open `http://localhost:4321` to view the warm **Household Log UI**, test all 12 fixture scenarios with one click, and inspect the spatial dwell heatmap!
 
 ---
 
