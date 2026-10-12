@@ -65,7 +65,7 @@ async function loadVisits() {
     if (!data.visits || data.visits.length === 0) {
       listContainer.innerHTML = `
         <div style="text-align: center; padding: 40px; color: var(--ink-muted);">
-          No visits recorded yet. Replay a fixture above or trigger a Ring API poll!
+          No visits recorded. Select a test scenario above or poll the Ring API.
         </div>
       `;
       return;

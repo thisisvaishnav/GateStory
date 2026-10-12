@@ -17,13 +17,13 @@
         <div class="brand-icon">🚪📜</div>
         <div>
           <h1 class="brand-title">GateStory</h1>
-          <div class="brand-tagline">Multi-Camera Spatial Visit Storylines · Ring Developer Platform & MCP</div>
+          <div class="brand-tagline">Multi-Camera Spatial Visit Storylines · Ring Developer Platform and MCP</div>
         </div>
       </div>
       <div class="system-status">
         <div class="status-badge" id="badge-ring">
           <span class="status-dot active"></span>
-          <span>Ring API: Live (200 OK)</span>
+          <span>Ring API: Connected</span>
         </div>
         <div class="status-badge" id="badge-mcp">
           <span class="status-dot"></span>
@@ -31,7 +31,7 @@
         </div>
         <div class="status-badge" id="badge-aws">
           <span class="status-dot"></span>
-          <span>AWS Builder: Active</span>
+          <span>AWS Services: Ready</span>
         </div>
       </div>
     </header>
@@ -40,7 +40,7 @@
     <section class="proof-banner">
       <div class="proof-left">
         <div class="proof-title">
-          <span>⚡ Stage-1 Runtime Proof · Ring Event History Poller</span>
+          <span>⚡ Runtime Verification · Ring Event History Poller</span>
         </div>
         <div class="proof-log" id="proof-log-line">
           [ring] GET /v1/history/devices/{id}/events 200 (1 events) · api.amazonvision.com
@@ -64,8 +64,8 @@
         <section class="section-card">
           <div class="section-header">
             <div>
-              <h2 class="section-title">12 Fixture Scenarios (G3 Gate Verification)</h2>
-              <div class="section-desc">Click any scenario to replay synthetic camera events through the correlation engine</div>
+              <h2 class="section-title">12 Test Scenarios (Verification Gate)</h2>
+              <div class="section-desc">Select a scenario to send synthetic camera events to the correlation engine.</div>
             </div>
             <button class="btn btn-sm" id="btn-reset-engine">Reset Log</button>
           </div>
@@ -79,7 +79,7 @@
           <div class="section-header">
             <div>
               <h2 class="section-title">Household Visit Storyline</h2>
-              <div class="section-desc">Correlated multi-camera sessions (W = 90s merging gap · 8 min door-close window)</div>
+              <div class="section-desc">Correlated multi-camera sessions (90-second merge gap and 8-minute close window).</div>
             </div>
             <div id="visit-count-tag" style="font-size: 13px; color: var(--ink-muted); font-weight: 600;">
               0 visits recorded
@@ -88,7 +88,7 @@
           <div class="visits-list" id="visits-list">
             <!-- Injected by app.js -->
             <div style="text-align: center; padding: 40px; color: var(--ink-muted);">
-              No visits recorded yet. Replay a fixture above or trigger a Ring API poll!
+              No visits recorded. Select a test scenario above or poll the Ring API.
             </div>
           </div>
         </section>
@@ -136,11 +136,11 @@
         <!-- MCP Tool Inspector -->
         <div class="widget">
           <h3 class="widget-title">
-            <span>MCP AI Tools (6 Registered)</span>
+            <span>MCP AI Tools (6 Available)</span>
             <span class="badge badge-open">Active</span>
           </h3>
           <div style="font-size: 12px; color: var(--ink-secondary); line-height: 1.5; margin-bottom: 12px;">
-            Enables Alexa+, Bee, and AI assistants to query smart home visit history via Model Context Protocol:
+            AI assistants query visit history through the Model Context Protocol:
           </div>
           <div style="display: flex; flex-direction: column; gap: 6px;">
             <button class="btn btn-sm" style="justify-content: flex-start; text-align: left;" id="btn-mcp-timeline">
@@ -163,9 +163,9 @@
 
         <!-- Security & Privacy Guarantee -->
         <div class="widget" style="background: var(--bg-card-subtle);">
-          <h3 class="widget-title" style="font-size: 14px;">🔒 Privacy Principles</h3>
+          <h3 class="widget-title" style="font-size: 14px;">🔒 Privacy Policy</h3>
           <p style="font-size: 12px; color: var(--ink-secondary); line-height: 1.5;">
-            <strong>Entity = Visit, Not Identity.</strong> GateStory tracks topological flow across cameras (gate → walkway → door) without facial recognition, persisted biometrics, or watchlists.
+            <strong>Track visits, not personal identities.</strong> GateStory records spatial movement across cameras (gate → walkway → door). The system does not use facial recognition, biometric data, or watchlists.
           </p>
         </div>
       </aside>
