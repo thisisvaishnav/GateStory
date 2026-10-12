@@ -3,184 +3,559 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GateStory 🚪📜 — Ring Multi-Camera Visit Storylines</title>
+  <title>GateStory — Multi-Camera Smart Home Visit Storylines</title>
   <link rel="stylesheet" href="/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="container">
-    <!-- Header -->
-    <header class="header">
-      <div class="brand">
-        <div class="brand-icon">🚪📜</div>
-        <div>
-          <h1 class="brand-title">GateStory</h1>
-          <div class="brand-tagline">Multi-Camera Spatial Visit Storylines · Ring Developer Platform and MCP</div>
-        </div>
-      </div>
-      <div class="system-status">
-        <div class="status-badge" id="badge-ring">
-          <span class="status-dot active"></span>
-          <span>Ring API: Connected</span>
-        </div>
-        <div class="status-badge" id="badge-mcp">
-          <span class="status-dot"></span>
-          <span>MCP Server: 6 Tools Ready</span>
-        </div>
-        <div class="status-badge" id="badge-aws">
-          <span class="status-dot"></span>
-          <span>AWS Services: Ready</span>
-        </div>
-      </div>
-    </header>
 
-    <!-- Ring Outbound Poller Runtime Proof Banner -->
-    <section class="proof-banner">
-      <div class="proof-left">
-        <div class="proof-title">
-          <span>⚡ Runtime Verification · Ring Event History Poller</span>
-        </div>
-        <div class="proof-log" id="proof-log-line">
-          [ring] GET /v1/history/devices/{id}/events 200 (1 events) · api.amazonvision.com
-        </div>
-      </div>
-      <div class="proof-actions">
-        <button class="btn btn-primary btn-sm" id="btn-poll-now">
-          <span>🔄 Poll Ring API</span>
-        </button>
-        <button class="btn btn-sm" id="btn-replay-fixture-1">
-          <span>⚡ Send Signed Fixture</span>
-        </button>
-      </div>
-    </section>
-
-    <!-- Main Grid -->
-    <div class="main-grid">
-      <!-- Main Content Column -->
-      <main>
-        <!-- Fixtures Quick Replay Bar -->
-        <section class="section-card">
-          <div class="section-header">
-            <div>
-              <h2 class="section-title">12 Test Scenarios (Verification Gate)</h2>
-              <div class="section-desc">Select a scenario to send synthetic camera events to the correlation engine.</div>
-            </div>
-            <button class="btn btn-sm" id="btn-reset-engine">Reset Log</button>
-          </div>
-          <div class="fixtures-grid" id="fixtures-container">
-            <!-- Injected by app.js -->
-          </div>
-        </section>
-
-        <!-- Visits Storyline Feed -->
-        <section class="section-card">
-          <div class="section-header">
-            <div>
-              <h2 class="section-title">Household Visit Storyline</h2>
-              <div class="section-desc">Correlated multi-camera sessions (90-second merge gap and 8-minute close window).</div>
-            </div>
-            <div id="visit-count-tag" style="font-size: 13px; color: var(--ink-muted); font-weight: 600;">
-              0 visits recorded
-            </div>
-          </div>
-          <div class="visits-list" id="visits-list">
-            <!-- Injected by app.js -->
-            <div style="text-align: center; padding: 40px; color: var(--ink-muted);">
-              No visits recorded. Select a test scenario above or poll the Ring API.
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <!-- Sidebar Column -->
-      <aside class="sidebar">
-        <!-- Spatial Dwell Heatmap -->
-        <div class="widget">
-          <h3 class="widget-title">
-            <span>Spatial Dwell Analysis</span>
-            <span style="font-size: 11px; color: var(--ink-muted);">Average Seconds</span>
-          </h3>
-          <div class="heatmap-zones">
-            <div class="heatmap-zone">
-              <div class="zone-label-row">
-                <span>Front Gate (0)</span>
-                <span id="heat-gate-val">0s</span>
-              </div>
-              <div class="zone-meter">
-                <div class="zone-fill" id="heat-gate-bar" style="width: 10%;"></div>
-              </div>
-            </div>
-            <div class="heatmap-zone">
-              <div class="zone-label-row">
-                <span>Walkway Path (1)</span>
-                <span id="heat-walk-val">0s</span>
-              </div>
-              <div class="zone-meter">
-                <div class="zone-fill" id="heat-walk-bar" style="width: 25%;"></div>
-              </div>
-            </div>
-            <div class="heatmap-zone">
-              <div class="zone-label-row">
-                <span>Front Door (2)</span>
-                <span id="heat-door-val">0s</span>
-              </div>
-              <div class="zone-meter">
-                <div class="zone-fill" id="heat-door-bar" style="width: 60%;"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- MCP Tool Inspector -->
-        <div class="widget">
-          <h3 class="widget-title">
-            <span>MCP AI Tools (6 Available)</span>
-            <span class="badge badge-open">Active</span>
-          </h3>
-          <div style="font-size: 12px; color: var(--ink-secondary); line-height: 1.5; margin-bottom: 12px;">
-            AI assistants query visit history through the Model Context Protocol:
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 6px;">
-            <button class="btn btn-sm" style="justify-content: flex-start; text-align: left;" id="btn-mcp-timeline">
-              <span>📋 get_visit_timeline</span>
-            </button>
-            <button class="btn btn-sm" style="justify-content: flex-start; text-align: left;" id="btn-mcp-story">
-              <span>📖 get_visit_story</span>
-            </button>
-            <button class="btn btn-sm" style="justify-content: flex-start; text-align: left;" id="btn-mcp-search">
-              <span>🔍 search_visitors</span>
-            </button>
-            <button class="btn btn-sm" style="justify-content: flex-start; text-align: left;" id="btn-mcp-rule">
-              <span>🛡️ create_gate_rule</span>
-            </button>
-            <button class="btn btn-sm" style="justify-content: flex-start; text-align: left;" id="btn-mcp-logs">
-              <span>📜 get_access_log</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Security & Privacy Guarantee -->
-        <div class="widget" style="background: var(--bg-card-subtle);">
-          <h3 class="widget-title" style="font-size: 14px;">🔒 Privacy Policy</h3>
-          <p style="font-size: 12px; color: var(--ink-secondary); line-height: 1.5;">
-            <strong>Track visits, not personal identities.</strong> GateStory records spatial movement across cameras (gate → walkway → door). The system does not use facial recognition, biometric data, or watchlists.
-          </p>
-        </div>
-      </aside>
-    </div>
+  <!-- ── Top Compliance Bar (Coinbase regulatory strip) ─────────────── -->
+  <div class="top-bar">
+    <span>🔒 <strong>Privacy Guaranteed:</strong> GateStory tracks spatial-temporal movement — never faces, identities, or watchlists.</span>
   </div>
 
-  <!-- Snapshot Modal -->
+  <!-- ── Sticky Nav ──────────────────────────────────────────────────── -->
+  <nav class="nav" id="main-nav">
+    <div class="nav-inner">
+      <!-- Brand -->
+      <a href="#" class="nav-brand">
+        <div class="nav-logo">GS</div>
+        <span class="nav-name">GateStory</span>
+      </a>
+
+      <!-- Center links -->
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How it Works</a></li>
+        <li><a href="#mcp">MCP Tools</a></li>
+        <li><a href="#dashboard">Dashboard</a></li>
+      </ul>
+
+      <!-- Right CTAs -->
+      <div class="nav-actions">
+        <div class="status-pill" id="nav-status">
+          <span class="status-dot active"></span>
+          <span>Ring: Live</span>
+        </div>
+        <a href="#dashboard" class="btn btn-primary btn-sm">Open Dashboard →</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       SECTION 1 — HERO (full-bleed dark, Coinbase style)
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-inner">
+      <!-- Left: Text content -->
+      <div class="hero-copy">
+        <div class="hero-eyebrow">
+          <span class="dot-pulse"></span>
+          Live Event-Time Spatial Correlation · Ring Developer Platform
+        </div>
+
+        <h1 class="hero-headline">
+          Turn scattered clips into<br>
+          <span class="hero-highlight">cohesive visit stories.</span>
+        </h1>
+
+        <p class="hero-sub">
+          GateStory correlates Ring multi-camera events into complete visit
+          storylines — Gate → Walkway → Door — with dwell times, trajectory
+          outcomes, and AI-powered narrative synthesis.
+        </p>
+
+        <div class="hero-ctas">
+          <button class="btn btn-blue btn-lg" id="btn-hero-poll"
+                  onclick="document.getElementById('btn-poll-now').click()">
+            🔄 Poll Live Ring Feed
+          </button>
+          <button class="btn btn-ghost btn-lg" id="btn-hero-fixture"
+                  onclick="document.getElementById('btn-replay-fixture-1').click()">
+            ⚡ Replay Sample Delivery
+          </button>
+        </div>
+
+        <!-- Social proof row -->
+        <div class="hero-proof">
+          <div class="proof-stat">
+            <strong>12</strong>
+            <span>Test scenarios</span>
+          </div>
+          <div class="proof-divider"></div>
+          <div class="proof-stat">
+            <strong>6</strong>
+            <span>MCP AI tools</span>
+          </div>
+          <div class="proof-divider"></div>
+          <div class="proof-stat">
+            <strong>90s</strong>
+            <span>Merge window</span>
+          </div>
+          <div class="proof-divider"></div>
+          <div class="proof-stat">
+            <strong>&lt;500ms</strong>
+            <span>MCP latency</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Product mockup card -->
+      <div class="hero-card">
+        <div class="hero-card-header">
+          <span class="hero-card-label">ACTIVE VISIT CORRELATION</span>
+          <span class="hero-card-badge">W = 90s</span>
+        </div>
+
+        <div class="hero-card-stat">
+          <div>
+            <div class="hero-card-meta">SPATIAL PATHWAY</div>
+            <div class="hero-card-value">Gate → Door</div>
+          </div>
+          <div class="hero-card-delta">● 23s dwell</div>
+        </div>
+
+        <!-- Step chain visualizer -->
+        <div class="hero-chain">
+          <div class="chain-node">
+            <div class="chain-circle">0</div>
+            <span>Front Gate</span>
+          </div>
+          <div class="chain-line"></div>
+          <div class="chain-node">
+            <div class="chain-circle">1</div>
+            <span>Walkway</span>
+          </div>
+          <div class="chain-line"></div>
+          <div class="chain-node">
+            <div class="chain-circle">2</div>
+            <span>Front Door</span>
+          </div>
+        </div>
+
+        <!-- Live story output -->
+        <div class="hero-story-box">
+          <div class="hero-story-label">STORYLINE OUTPUT</div>
+          <div class="hero-story-text" id="hero-story-live">
+            "At 02:29:27 PM, visitor arrived at Front Gate, proceeded along the
+            walkway (21s), reached the front door (15s dwell), rang the doorbell,
+            and departed. Total visit: 23s."
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       SECTION 2 — TRUST BAR (logos / badges)
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="trust-bar">
+    <div class="trust-inner">
+      <span class="trust-label">Built on</span>
+      <div class="trust-badges">
+        <div class="trust-badge">🔵 Ring Developer Platform</div>
+        <div class="trust-badge">☁️ AWS Bedrock Nova</div>
+        <div class="trust-badge">🔗 Model Context Protocol</div>
+        <div class="trust-badge">📦 Amazon DynamoDB</div>
+        <div class="trust-badge">🔐 HMAC-SHA256 Verified</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       SECTION 3 — FEATURES GRID (3-col card grid, Coinbase style)
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="features" id="features">
+    <div class="section-wrap">
+      <div class="section-eyebrow">CAPABILITIES</div>
+      <h2 class="section-headline">
+        Everything your smart home<br>camera system should be.
+      </h2>
+      <p class="section-sub">
+        From raw Ring camera events to structured, narrative-rich visit sessions —
+        privacy-first, AI-powered, and MCP-ready.
+      </p>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔗</div>
+          <h3>Spatial Correlation Engine</h3>
+          <p>Correlates gate → walkway → door events into a single visit session using a 90-second merge window and 8-minute close boundary.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📖</div>
+          <h3>Narrative Synthesis</h3>
+          <p>Deterministic storylines enriched with AWS Bedrock Nova — from raw timestamps into human-readable visit summaries.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>Privacy by Design</h3>
+          <p>Zero facial recognition. Zero biometric profiling. Pure spatial-temporal event windowing — visit patterns, not personal identities.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3>MCP AI Toolset</h3>
+          <p>6 Model Context Protocol tools expose your visit history to Claude, GPT, and any AI assistant — &lt;500ms round-trip latency.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔐</div>
+          <h3>HMAC-SHA256 Webhook</h3>
+          <p>Inbound Ring events verified with <code>crypto.timingSafeEqual</code> constant-time comparison — production-grade security.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Dwell Heatmaps</h3>
+          <p>Per-zone average dwell time metrics across all correlated visits — instantly identify patterns in gate, walkway, and door activity.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       SECTION 4 — HOW IT WORKS (alternating rows, Coinbase product showcase)
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="section-wrap">
+      <div class="section-eyebrow">HOW IT WORKS</div>
+      <h2 class="section-headline">From raw events to rich stories.</h2>
+
+      <!-- Row 1 -->
+      <div class="showcase-row">
+        <div class="showcase-copy">
+          <div class="showcase-step">01</div>
+          <h3>Dual Ingest Paths</h3>
+          <p>
+            GateStory receives Ring camera events through two paths simultaneously:
+            an outbound <strong>Event History Poller</strong> hitting
+            <code>api.amazonvision.com</code>, and an inbound
+            <strong>HMAC-verified webhook receiver</strong>. Both paths feed
+            the same deduplication layer.
+          </p>
+          <div class="showcase-tags">
+            <span class="tag">Ring API</span>
+            <span class="tag">HMAC-SHA256</span>
+            <span class="tag">Deduplication</span>
+          </div>
+        </div>
+        <div class="showcase-visual showcase-dark">
+          <div class="code-block">
+            <div class="code-line"><span class="code-dim">[ring]</span> GET /v1/history/devices/{'{id}'}/events</div>
+            <div class="code-line"><span class="code-green">200 OK</span> · 1 event · api.amazonvision.com</div>
+            <div class="code-line code-gap"><span class="code-dim">[webhook]</span> POST /api/ring/webhook</div>
+            <div class="code-line"><span class="code-green">✓ HMAC verified</span> · timingSafeEqual</div>
+            <div class="code-line code-gap"><span class="code-dim">[dedup]</span> Event merged into session</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2 (flipped) -->
+      <div class="showcase-row showcase-row-flip">
+        <div class="showcase-copy">
+          <div class="showcase-step">02</div>
+          <h3>Temporal Correlation</h3>
+          <p>
+            The Correlation Engine windows events by camera zone sequence —
+            <strong>gate(0) → walkway(1) → door(2)</strong> — within a 90-second
+            merge gap. Each correlated sequence becomes a structured
+            <code>VisitSession</code> with dwell times per zone.
+          </p>
+          <div class="showcase-tags">
+            <span class="tag">90s Window</span>
+            <span class="tag">Spatial Topology</span>
+            <span class="tag">Dwell Analysis</span>
+          </div>
+        </div>
+        <div class="showcase-visual showcase-blue-soft">
+          <div class="flow-diagram">
+            <div class="flow-node">
+              <div class="flow-badge">gate(0)</div>
+              <div class="flow-label">Front Gate</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node">
+              <div class="flow-badge">walkway(1)</div>
+              <div class="flow-label">Walkway</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node">
+              <div class="flow-badge">door(2)</div>
+              <div class="flow-label">Front Door</div>
+            </div>
+            <div class="flow-full">
+              <span class="flow-outcome">reached_door_completed · 23s total</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 3 -->
+      <div class="showcase-row">
+        <div class="showcase-copy">
+          <div class="showcase-step">03</div>
+          <h3>Narrative Synthesis</h3>
+          <p>
+            Each correlated session is rendered into a human-readable storyline
+            — deterministically by default, or enriched by
+            <strong>AWS Bedrock Nova</strong> for richer narrative detail.
+            Exposed to AI assistants via 6 MCP tools.
+          </p>
+          <div class="showcase-tags">
+            <span class="tag">AWS Bedrock Nova</span>
+            <span class="tag">Deterministic</span>
+            <span class="tag">MCP Tools</span>
+          </div>
+        </div>
+        <div class="showcase-visual showcase-light">
+          <div class="story-preview">
+            <div class="story-preview-label">VISIT STORYLINE</div>
+            <div class="story-preview-text">
+              "At 02:29:27 PM, visitor arrived at the Front Gate, proceeded along
+              the walkway (21s), reached the front door (15s dwell), rang the
+              doorbell, and departed back down the walkway. Total visit duration: 23s."
+            </div>
+            <div class="story-preview-meta">
+              <span class="tag-green">reached_door_completed</span>
+              <span>Duration: 23s</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       SECTION 5 — MCP TOOLS (Coinbase asset grid style)
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="mcp-section" id="mcp">
+    <div class="section-wrap">
+      <div class="section-eyebrow">MODEL CONTEXT PROTOCOL</div>
+      <h2 class="section-headline">Your visit history, AI-ready.</h2>
+      <p class="section-sub">
+        GateStory exposes 6 MCP tools via <code>@modelcontextprotocol/sdk</code>
+        — compatible with Claude Desktop, GPT, and any MCP-compliant AI agent.
+      </p>
+
+      <div class="mcp-grid">
+        <div class="mcp-card">
+          <div class="mcp-icon">📋</div>
+          <div class="mcp-name"><code>get_visit_timeline</code></div>
+          <div class="mcp-desc">Chronological event breakdown with relative second offsets for each camera hop.</div>
+        </div>
+        <div class="mcp-card">
+          <div class="mcp-icon">📖</div>
+          <div class="mcp-name"><code>get_visit_story</code></div>
+          <div class="mcp-desc">Cohesive narrative synthesis — deterministic or Bedrock Nova enriched.</div>
+        </div>
+        <div class="mcp-card">
+          <div class="mcp-icon">🔍</div>
+          <div class="mcp-name"><code>search_visitors</code></div>
+          <div class="mcp-desc">Filter visits by outcome, dwell duration, trajectory, or time range.</div>
+        </div>
+        <div class="mcp-card">
+          <div class="mcp-icon">📷</div>
+          <div class="mcp-name"><code>get_snapshot</code></div>
+          <div class="mcp-desc">Retrieve camera snapshots and HUD framing for key visit hops.</div>
+        </div>
+        <div class="mcp-card">
+          <div class="mcp-icon">🛡️</div>
+          <div class="mcp-name"><code>create_gate_rule</code></div>
+          <div class="mcp-desc">Set alert boundaries or dwell thresholds — e.g., loitering &gt; 45s.</div>
+        </div>
+        <div class="mcp-card">
+          <div class="mcp-icon">📜</div>
+          <div class="mcp-name"><code>get_access_log</code></div>
+          <div class="mcp-desc">Full audit trail of camera triggers, correlations, and rule activations.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       SECTION 6 — LIVE DASHBOARD (the full app UI)
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="dashboard-section" id="dashboard">
+    <div class="section-wrap">
+      <div class="section-eyebrow">LIVE DASHBOARD</div>
+      <h2 class="section-headline">Try it right now.</h2>
+      <p class="section-sub">
+        Replay one of 12 fixture scenarios or poll the live Ring API — watch
+        the correlation engine produce a structured visit storyline in real time.
+      </p>
+
+      <!-- Runtime Proof Banner -->
+      <div class="proof-banner">
+        <div class="proof-left">
+          <div class="proof-title">⚡ Runtime Proof · Ring Event History Poller</div>
+          <div class="proof-log" id="proof-log-line">
+            [ring] GET /v1/history/devices/{id}/events 200 (1 events) · api.amazonvision.com
+          </div>
+        </div>
+        <div class="proof-actions">
+          <button class="btn btn-blue btn-sm" id="btn-poll-now">🔄 Poll Ring API</button>
+          <button class="btn btn-outline btn-sm" id="btn-replay-fixture-1">⚡ Send Signed Fixture</button>
+        </div>
+      </div>
+
+      <!-- Dashboard Grid -->
+      <div class="dash-grid">
+        <!-- Main Column -->
+        <main class="dash-main">
+          <!-- 12 Fixture Scenarios -->
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <div>
+                <h3 class="dash-card-title">12 Test Scenarios</h3>
+                <p class="dash-card-sub">Select a scenario to send synthetic events through the correlation engine.</p>
+              </div>
+              <button class="btn btn-outline btn-sm" id="btn-reset-engine">Reset Log</button>
+            </div>
+            <div class="fixtures-grid" id="fixtures-container">
+              <!-- Injected by app.js -->
+            </div>
+          </div>
+
+          <!-- Visit Storyline Feed -->
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <div>
+                <h3 class="dash-card-title">Household Visit Storyline</h3>
+                <p class="dash-card-sub">Correlated multi-camera sessions (90s merge gap · 8min close window).</p>
+              </div>
+              <div id="visit-count-tag" class="count-tag">0 visits</div>
+            </div>
+            <div class="visits-list" id="visits-list">
+              <div class="empty-state">
+                No visits recorded. Select a test scenario above or poll the Ring API.
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <!-- Sidebar -->
+        <aside class="dash-sidebar">
+          <!-- Heatmap Widget -->
+          <div class="widget">
+            <div class="widget-header">
+              <h4 class="widget-title">Spatial Dwell Analysis</h4>
+              <span class="widget-meta">Avg Seconds</span>
+            </div>
+            <div class="heatmap-zones">
+              <div class="heatmap-zone">
+                <div class="zone-row">
+                  <span>Front Gate (0)</span>
+                  <span id="heat-gate-val">0s</span>
+                </div>
+                <div class="zone-track">
+                  <div class="zone-fill" id="heat-gate-bar" style="width:10%"></div>
+                </div>
+              </div>
+              <div class="heatmap-zone">
+                <div class="zone-row">
+                  <span>Walkway Path (1)</span>
+                  <span id="heat-walk-val">0s</span>
+                </div>
+                <div class="zone-track">
+                  <div class="zone-fill" id="heat-walk-bar" style="width:25%"></div>
+                </div>
+              </div>
+              <div class="heatmap-zone">
+                <div class="zone-row">
+                  <span>Front Door (2)</span>
+                  <span id="heat-door-val">0s</span>
+                </div>
+                <div class="zone-track">
+                  <div class="zone-fill" id="heat-door-bar" style="width:60%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MCP Quick-Test Widget -->
+          <div class="widget">
+            <div class="widget-header">
+              <h4 class="widget-title">MCP AI Tools</h4>
+              <span class="badge-active">6 Active</span>
+            </div>
+            <p class="widget-desc">Query visit history through MCP:</p>
+            <div class="mcp-btns">
+              <button class="btn btn-outline btn-sm mcp-btn" id="btn-mcp-timeline">📋 get_visit_timeline</button>
+              <button class="btn btn-outline btn-sm mcp-btn" id="btn-mcp-story">📖 get_visit_story</button>
+              <button class="btn btn-outline btn-sm mcp-btn" id="btn-mcp-search">🔍 search_visitors</button>
+              <button class="btn btn-outline btn-sm mcp-btn" id="btn-mcp-rule">🛡️ create_gate_rule</button>
+              <button class="btn btn-outline btn-sm mcp-btn" id="btn-mcp-logs">📜 get_access_log</button>
+            </div>
+          </div>
+
+          <!-- Privacy Widget -->
+          <div class="widget widget-privacy">
+            <h4 class="widget-title">🔒 Privacy Guarantee</h4>
+            <p>
+              <strong>Track visits, not identities.</strong> GateStory records
+              spatial movement across cameras (gate → walkway → door). No facial
+              recognition, no biometric profiling, no watchlists.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       SECTION 7 — FINAL CTA (dark, full-bleed)
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="cta-section">
+    <div class="cta-inner">
+      <h2 class="cta-headline">
+        Your home, finally<br>
+        <span class="cta-highlight">telling the whole story.</span>
+      </h2>
+      <p class="cta-sub">
+        Built for the Amazon "Build, Ship, Shape" Hackathon 2026 —
+        Track 4: Ring + AWS Builder mini-challenge.
+      </p>
+      <div class="cta-actions">
+        <a href="#dashboard" class="btn btn-blue btn-lg">Open Live Dashboard</a>
+        <a href="https://github.com" class="btn btn-ghost-white btn-lg" target="_blank" rel="noopener">
+          View Source ↗
+        </a>
+      </div>
+      <div class="cta-legal">
+        Apache-2.0 · No biometric data collected · Privacy first
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ──────────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="nav-logo nav-logo-sm">GS</div>
+        <span>GateStory</span>
+      </div>
+      <div class="footer-links">
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#mcp">MCP Tools</a>
+        <a href="#dashboard">Dashboard</a>
+      </div>
+      <div class="footer-legal">
+        © 2026 GateStory · Apache-2.0 · Amazon Hackathon Project
+      </div>
+    </div>
+  </footer>
+
+  <!-- ── Snapshot Modal ─────────────────────────────────────────────── -->
   <div class="modal-overlay" id="modal-snapshot">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 id="modal-title" style="font-family: var(--font-serif); font-size: 18px;">Camera Snapshot HUD</h3>
+        <h3 id="modal-title">Camera Snapshot HUD</h3>
         <button class="modal-close" id="modal-close-btn">&times;</button>
       </div>
-      <div style="text-align: center;">
-        <img id="modal-img" src="" alt="Camera HUD" style="max-width: 100%; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+      <div style="text-align:center;">
+        <img id="modal-img" src="" alt="Camera HUD"
+             style="max-width:100%; border-radius:12px; border:1px solid var(--border);">
       </div>
     </div>
   </div>
