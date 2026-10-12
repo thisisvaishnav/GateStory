@@ -15,7 +15,7 @@ if (fs.existsSync(envLocalPath)) {
 }
 
 const envSchema = z.object({
-  PORT: z.coerce.number().default(3000),
+  PORT: z.coerce.number().default(4321),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 
   // Ring Credentials
